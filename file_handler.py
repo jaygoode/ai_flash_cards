@@ -9,12 +9,12 @@ def create_json_file(text:str):
     match = pattern.search(text)
     if match:
         json_str = match.group(0)
-
+        json_str.replace("\\", "").replace("\n", "").replace("  ", "")
         # Load the JSON string to Python object
         data = json.loads(json_str)
 
         # Save to a JSON file
-        with open('task_plan.json', 'w', encoding='utf-8') as f:
+        with open('cards.json', 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=2)
 
         print("JSON successfully extracted and saved to 'task_plan.json'")

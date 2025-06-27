@@ -18,7 +18,7 @@ if __name__ == "__main__":
 
     #options
     # topic = input("What topic do you want to base the cards on? (leave empty if you want to use another option for generation): ") # just an input?
-    topic = "testingtopic"
+    topic = "testingtesttopic"
     # use_file = input("use file to base cards on? (Y/N): ")
     use_file = "n"
 
@@ -28,7 +28,9 @@ if __name__ == "__main__":
         text = config[filename_key]
 
     # deck_name = input("deck name: ")
-    deck_name = "test"
+    deck_name = "hello"
+    # card_amount = str(input("how many cards would you like to generate: "))
+    card_amount = "5"
 
     # cards_to_add = [
     # {"front": "Capital of France?", "back": "Paris", "tags": topic},
@@ -38,6 +40,5 @@ if __name__ == "__main__":
 
     filled_prompt = prompts["generate_flashcards"].replace("{{topic}}", topic).replace("{{text}}", text)
     cards_to_add = ai_handler.prompt_ai(filled_prompt, model=config["model"])
-    breakpoint()
-    json_format = file_handler.create_json_file(cards_to_add)
-    anki_api_handler.add_cards(deck_name, cards_to_add)
+    file_handler.create_json_file(cards_to_add)
+    anki_api_handler.add_cards(deck_name, file_handler.read_json_file("cards.json"))

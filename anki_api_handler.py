@@ -4,12 +4,15 @@ import json
 ANKI_CONNECT_URL = "http://localhost:8765"
 
 def invoke(action, params={}):
-    return requests.post(ANKI_CONNECT_URL, json={
-        "action": action,
-        "version": 6,
-        "params": params
-    }).json()
-
+    try:
+        return requests.post(ANKI_CONNECT_URL, json={
+            "action": action,
+            "version": 6,
+            "params": params
+        }).json()
+    except:
+        print("anki api invoke failed.")
+        
 def ensure_deck_exists(deck_name):
     existing_decks = invoke("deckNames")["result"]
     if deck_name not in existing_decks:
@@ -35,11 +38,4 @@ def add_cards(deck_name, cards):
             print(f"Failed to add card: {card['front']} → {response['error']}")
         else:
             print(f"Added card: {card['front']}")
-
-# Example usage:
-cards_to_add = [
-    {"front": "Capital of France?", "back": "Paris", "tags": ["geography"]},
-    {"front": "2 + 2", "back": "4", "tags": ["math"]},
-    {"front": "Python creator?", "back": "Guido van Rossum"}
-]
 

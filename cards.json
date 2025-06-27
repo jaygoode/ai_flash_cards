@@ -1,0 +1,52 @@
+[
+  {
+    "front": "What are the main types of software testing?",
+    "back": "Functional, Non-Functional, Performance, Security, Usability",
+    "tags": "testingtesttopic"
+  },
+  {
+    "front": "What is the primary purpose of test automation?",
+    "back": "To streamline and speed up testing processes by executing tests in a repeatable manner.",
+    "tags": "testingtesttopic"
+  },
+  {
+    "front": "Which tool is commonly used for manual testing?",
+    "back": "Selenium, Puppet, QTP (QuickTest Professional)",
+    "tags": "testingtesttopic"
+  },
+  {
+    "front": "What is the difference between a test case and a test script?",
+    "back": "A test case defines what needs to be tested in detail, while a test script provides step-by-step instructions for automation.",
+    "tags": "testingtesttopic"
+  },
+  {
+    "front": "Which testing strategy involves different phases such as planning, designing, executing, reporting, and reviewing?",
+    "back": "Test Strategy",
+    "tags": "testingtesttopic"
+  },
+  {
+    "front": "What type of test inputs are used in black box testing?",
+    "back": "Invalid or unexpected inputs to check if the system handles them gracefully.",
+    "tags": "testingtesttopic"
+  },
+  {
+    "front": "How is a test environment typically defined?",
+    "back": "Specific setup configurations tailored for testing purposes, including software versions and hardware specs.",
+    "tags": "testingtesttopic"
+  },
+  {
+    "front": "What are some common strategies to manage test data efficiently?",
+    "back": "Data-driven scenarios, fixtures management, and parameterized tests to reuse test cases.",
+    "tags": "testingtesttopic"
+  },
+  {
+    "front": "Why is it important to use metrics in testing?",
+    "back": "To measure the quality of software, identify areas for improvement, and ensure reliability.",
+    "tags": "testingtesttopic"
+  },
+  {
+    "front": "What are some common methodologies used in Agile testing?",
+    "back": "Test-Driven Development (TDD), Continuous Integration/Continuous Deployment (CI/CD), and Test-First Development (TFD).",
+    "tags": "testingtesttopic"
+  }
+]
