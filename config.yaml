@@ -1,0 +1,5 @@
+task_plan_json_fp: "./task_plan.json"
+prompts_fp: "./prompts.yaml"
+memory_fp: "./memory.yaml"
+model: "deepseek-r1"
+anki_path: "C:\\Users\\johnn\\AppData\\Local\\Programs\\Anki\\anki.exe"

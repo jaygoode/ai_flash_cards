@@ -1,0 +1,17 @@
+generate_flashcards: |
+  You are an expert educational content creator. Based on the following context, generate a list of 10 flashcards in Python dictionary format, each with:
+
+  - a 'front' field (the question),
+  - a 'back' field (the answer),
+  - a 'tags' field containing the topic: "{{topic}}"
+
+  Use the following context as the knowledge source, if its not None:
+
+  {{text}}
+
+  Output format:
+  [
+      {"front": "Question 1?", "back": "Answer 1", "tags": "{{topic}}"},
+      ...
+  ]
+  Only return the Python list of dictionaries.
