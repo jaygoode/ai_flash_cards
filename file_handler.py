@@ -6,6 +6,7 @@ import yaml
 import os
 import csv
 import pdfplumber
+import tiktoken
 
 def create_json_file(text:str):
     pattern = re.compile(r'\[.*?\]', re.DOTALL)
@@ -113,3 +114,33 @@ handlers = {
     'pdf': read_pdf,
     'csv': read_csv,
 }
+
+
+def chunk_text(text, max_tokens=3000, model_name="gpt-3.5-turbo"):
+    """
+    Splits text into chunks that fit within the max_tokens limit.
+    Returns a list of text chunks.
+
+    Args:
+        text (str): The full text to split.
+        max_tokens (int): Maximum tokens per chunk (adjust to model's limit minus response).
+        model_name (str): Model used to select tokenizer (supports OpenAI tokenizer names).
+    """
+    enc = tiktoken.encoding_for_model(model_name)
+
+    words = text.split()
+    chunks = []
+    current_chunk = []
+
+    for word in words:
+        current_chunk.append(word)
+        tokens = enc.encode(" ".join(current_chunk))
+        if len(tokens) > max_tokens:
+            current_chunk.pop()
+            chunks.append(" ".join(current_chunk))
+            current_chunk = [word]
+
+    if current_chunk:
+        chunks.append(" ".join(current_chunk))
+
+    return chunks

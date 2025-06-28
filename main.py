@@ -17,23 +17,26 @@ if __name__ == "__main__":
 
 
 
-    text = "None"
     topic = "deck for learning finnish grammar"
     use_file = "n"
     deck_name = "finnish"
     card_amount = "5"
+    text = "None"
 
     # topic = input("deck topic(s): ")
     # use_file = input("use file to base cards on? (Y/N): ")
     # deck_name = input("deck name: ")
     # card_amount = str(input("amount of cards to generate: "))
+    # text = input("further description for what the cards should be based on (or leave empty): ")
 
 
 
     if use_file.lower() is any(["yes", "y"]):
         filename_key = input("yaml filename key value: ")
         filepath = config[filename_key]
-        text = file_handler.read_file(filepath)
+        text = "create cards based on this text: \n"
+        text += file_handler.read_file(filepath)
+        chunked_text = file_handler.chunk_text(text, model_name=config["model"])
 
     # cards_to_add = [
     # {"front": "Capital of France?", "back": "Paris", "tags": topic},

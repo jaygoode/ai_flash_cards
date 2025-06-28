@@ -1,27 +1,27 @@
 [
   {
-    "front": "What is the singular form of 'kirja' (book)?",
-    "back": "'Kirja' becomes 'kirja'. In Finnish, most nouns do not have a plural form.",
+    "front": "What is a singular noun in Finnish?",
+    "back": "A singular noun ends with -n, -t, or -k.",
     "tags": "deck for learning finnish grammar"
   },
   {
-    "front": "What is the word order in a Finnish sentence?",
-    "back": "The standard word order in Finnish sentences is Subject-Object-Verb (SOV).",
+    "front": "What are the plural forms of -n, -t, and -k nouns?",
+    "back": "'-i' is added to form plurals for nouns ending in -n or -t, while -t is used for those ending in -k.",
     "tags": "deck for learning finnish grammar"
   },
   {
-    "front": "What does 'moi' mean in Finnish?",
-    "back": "'Moi' is the informal greeting or hello, similar to English.",
+    "front": "What is the second person singular pronoun in Finnish?",
+    "back": "The second person singular pronoun is 'sin\u00e4'.",
     "tags": "deck for learning finnish grammar"
   },
   {
-    "front": "How do you ask 'What is your name?' in Finnish?",
-    "back": "'Mit\u00e4 sin\u00e4 nimiksi n\u00e4yt\u00e4t?' means 'What is your name?'",
+    "front": "How do you form the past tense of regular verbs in Finnish?",
+    "back": "Regular verbs in the present tense end with -a, -\u00e4, -i, or -e. To form the past tense, change the ending to -in, -it\u00e4, -itsi, or -itse.",
     "tags": "deck for learning finnish grammar"
   },
   {
-    "front": "How do you say 'Thank you' in Finnish?",
-    "back": "'Kiitos' means 'Thank you'.",
+    "front": "What is a passive verb in Finnish and how do you form it?",
+    "back": "A passive verb refers to an action performed on the subject. To form a passive verb, use the auxiliary verb 'kuuluu' followed by the past participle of the main verb.",
     "tags": "deck for learning finnish grammar"
   }
 ]

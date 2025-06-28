@@ -1,21 +1,26 @@
 generate_flashcards: |
-  You are an expert educational content creator. Based on the following context, generate a list of {{card_amount}} flashcards in Python dictionary format, each with:
+  You are an expert educational content creator and flashcard generator.
 
-  - a 'front' field (the question),
-  - a 'back' field (the answer),
-  - a 'tags' field containing the topic: "{{topic}}"
+  Task: Create {{card_amount}} high-quality flashcards in Python dictionary format. Each flashcard should include:
+  - "front": a clear and concise question or prompt,
+  - "back": an accurate, informative answer,
+  - "tags": the string "{{topic}}"
 
-  If the text below is not "None" use the text as basis for the cards, else use the topic as basis for the card information:
+  Context:
+  - If {{text}} is not "None", use it as the sole source for content generation.
+  - If {{text}} is "None", use general knowledge of "{{topic}}" to generate relevant flashcards.
 
-  {{text}}
+  Guidelines:
+  - Focus on the most essential, testable information.
+  - Ensure content accuracy using your internal knowledge and tools (or web search if available).
+  - Use simple, learner-friendly phrasing.
+  - Avoid repetition between cards.
 
-  Verify: Use your internal tools and web search(if available), to ensure information accuracy. 
-  
-  Output format:
+  Output:
+  Return a valid Python list of dictionaries. Example format:
   [
-      {"front": "Question 1?", "back": "Answer 1", "tags": "{{topic}}"},
+      {"front": "Question 1?", "back": "Answer 1.", "tags": "{{topic}}"},
       ...
   ]
 
-  Only return the Python list of dictionaries.
-  Do not include your thought process—just provide the best, most accurate answer possible.
+  Do not explain your reasoning or include anything outside the list. Only return the list of flashcards.
