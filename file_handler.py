@@ -1,8 +1,11 @@
+import docx
 import psutil
 import json
 import re
 import yaml
 import os
+import csv
+import pdfplumber
 
 def create_json_file(text:str):
     pattern = re.compile(r'\[.*?\]', re.DOTALL)
@@ -45,7 +48,6 @@ def write_to_yaml_file(data:dict, filepath:str) -> None:
         yaml.dump(existing_data, f)
 
 
-
 def is_anki_running():
     for proc in psutil.process_iter(attrs=["name", "exe", "cmdline"]):
         try:
@@ -54,3 +56,39 @@ def is_anki_running():
         except (psutil.NoSuchProcess, psutil.AccessDenied):
             continue
     return False
+
+def read_file(filepath):
+    filetype = filepath.split(".")[-1].lower()
+
+    handler = handlers.get(filetype)
+    if handler:
+        return handler(filepath)
+    else:
+        print(f"Filetype '{filetype}' is not supported. Please use another filetype.")
+
+def read_txt(filepath):
+    with open(filepath, 'r', encoding='utf-8') as file:
+        return file.read()
+
+def read_docx(filepath):
+    doc = docx.Document(filepath)
+    return "\n".join([para.text for para in doc.paragraphs])
+
+def read_pdf(filepath):
+    text = ""
+    with pdfplumber.open(filepath) as pdf:
+        for page in pdf.pages:
+            text += page.extract_text() or ''
+    return text
+
+def read_csv(filepath):
+    with open(filepath, newline='', encoding='utf-8') as csvfile:
+        reader = csv.reader(csvfile)
+        return "\n".join([", ".join(row) for row in reader])
+
+handlers = {
+    'txt': read_txt,
+    'docx': read_docx,
+    'pdf': read_pdf,
+    'csv': read_csv,
+}
