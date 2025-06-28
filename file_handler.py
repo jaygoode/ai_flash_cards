@@ -11,18 +11,39 @@ def create_json_file(text:str):
     pattern = re.compile(r'\[.*?\]', re.DOTALL)
     match = pattern.search(text)
     if match:
-        json_str = match.group(0)
-        json_str.replace("\\", "").replace("\n", "").replace("  ", "")
-        # Load the JSON string to Python object
-        data = json.loads(json_str)
+        raw_json_str = match.group(0)
+        cleaned_json_str = clean_malformed_json(raw_json_str)
+        try:
+            data = json.loads(cleaned_json_str)
+        except:
+            breakpoint()
 
-        # Save to a JSON file
         with open('cards.json', 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=2)
 
-        print("JSON successfully extracted and saved to 'task_plan.json'")
+        print("JSON successfully extracted and saved to 'cards.json'")
     else:
         print("No JSON found in the text.")
+
+def clean_malformed_json(json_str):
+    json_str = json_str.replace("\\", "").replace("\n", "").replace("  ", "")
+    # Replace ellipses `...` with a placeholder
+    json_str = json_str.replace('...', '[truncated]')
+
+    # Replace smart quotes (optional, in case of Word copy-paste)
+    json_str = json_str.replace('“', '"').replace('”', '"')
+
+    # Escape unescaped inner quotes (e.g. inside values)
+    def escape_inner_quotes(match):
+        return f'"{match.group(1).replace("\"", "\\\"")}"'
+
+    # This ensures all string values are properly quoted and escaped
+    json_str = re.sub(r'"([^"]*?[^\\])"', escape_inner_quotes, json_str)
+
+    # Remove trailing commas before closing brackets/braces
+    json_str = re.sub(r',\s*(\]|\})', r'\1', json_str)
+
+    return json_str
 
 
 def read_json_file(filepath:str) -> dict:

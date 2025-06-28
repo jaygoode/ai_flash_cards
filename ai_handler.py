@@ -20,7 +20,7 @@ class TaskType(Enum):
 config = file_handler.read_yaml_file("config.yaml")
 
 def prompt_ai(system_prompt, model="llama2"):
-    print("[*] Sending request to Ollama...")
+    print(f"[*] Sending request to Ollama {model} model...")
 
     result = subprocess.run(
         ["ollama", "run", model, system_prompt],

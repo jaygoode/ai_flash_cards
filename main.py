@@ -17,22 +17,23 @@ if __name__ == "__main__":
 
 
 
-    # topic = input("What topic do you want to base the cards on? (leave empty if you want to use another option for generation): ") # just an input?
-    topic = "testingtesttopic"
-    use_file = input("use file to base cards on? (Y/N): ")
-    use_file = "n"
     text = "None"
+    topic = "deck for learning finnish grammar"
+    use_file = "n"
+    deck_name = "finnish"
+    card_amount = "5"
+
+    # topic = input("deck topic(s): ")
+    # use_file = input("use file to base cards on? (Y/N): ")
+    # deck_name = input("deck name: ")
+    # card_amount = str(input("amount of cards to generate: "))
+
+
 
     if use_file.lower() is any(["yes", "y"]):
         filename_key = input("yaml filename key value: ")
         filepath = config[filename_key]
         text = file_handler.read_file(filepath)
-
-    deck_name = input("deck name: ")
-    card_amount = str(input("amount of cards to generate: "))
-
-    # deck_name = "hello"
-    # card_amount = "5"
 
     # cards_to_add = [
     # {"front": "Capital of France?", "back": "Paris", "tags": topic},

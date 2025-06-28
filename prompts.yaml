@@ -9,7 +9,7 @@ generate_flashcards: |
 
   {{text}}
 
-  Verify: Use your internal tools—code interpreter, web search (if available), and data analysis—to fact-check key details and ensure accuracy.
+  Verify: Use your internal tools and web search(if available), to ensure information accuracy. 
   
   Output format:
   [
