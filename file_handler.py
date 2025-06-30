@@ -8,8 +8,9 @@ import csv
 import pdfplumber
 import tiktoken
 
-def create_json_file(text:str):
-    pattern = re.compile(r'\[.*?\]', re.DOTALL)
+
+def create_json_file(text: str):
+    pattern = re.compile(r"\[.*?\]", re.DOTALL)
     match = pattern.search(text)
     if match:
         raw_json_str = match.group(0)
@@ -19,45 +20,48 @@ def create_json_file(text:str):
         except:
             breakpoint()
 
-        with open('cards.json', 'w', encoding='utf-8') as f:
+        with open("cards.json", "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2)
 
         print("JSON successfully extracted and saved to 'cards.json'")
     else:
         print("No JSON found in the text.")
 
+
 def clean_malformed_json(json_str):
     json_str = json_str.replace("\\", "").replace("\n", "").replace("  ", "")
     # Replace ellipses `...` with a placeholder
-    json_str = json_str.replace('...', '[truncated]')
+    json_str = json_str.replace("...", "[truncated]")
 
     # Replace smart quotes (optional, in case of Word copy-paste)
-    json_str = json_str.replace('“', '"').replace('”', '"')
+    json_str = json_str.replace("“", '"').replace("”", '"')
 
     # Escape unescaped inner quotes (e.g. inside values)
     def escape_inner_quotes(match):
-        return f'"{match.group(1).replace("\"", "\\\"")}"'
+        return f'"{match.group(1).replace('"', '\\"')}"'
 
     # This ensures all string values are properly quoted and escaped
     json_str = re.sub(r'"([^"]*?[^\\])"', escape_inner_quotes, json_str)
 
     # Remove trailing commas before closing brackets/braces
-    json_str = re.sub(r',\s*(\]|\})', r'\1', json_str)
+    json_str = re.sub(r",\s*(\]|\})", r"\1", json_str)
 
     return json_str
 
 
-def read_json_file(filepath:str) -> dict:
-    with open(filepath, 'r', encoding='utf-8') as f:
+def read_json_file(filepath: str) -> dict:
+    with open(filepath, "r", encoding="utf-8") as f:
         data = json.load(f)
     return data
 
-def read_yaml_file(filepath:str) -> dict:
-    with open(filepath, 'r', encoding='utf-8') as f:
+
+def read_yaml_file(filepath: str) -> dict:
+    with open(filepath, "r", encoding="utf-8") as f:
         data = yaml.safe_load(f)
     return data
 
-def write_to_yaml_file(data:dict, filepath:str) -> None:
+
+def write_to_yaml_file(data: dict, filepath: str) -> None:
     if os.path.exists(filepath):
         with open(filepath, "r") as f:
             existing_data = yaml.safe_load(f) or {}
@@ -79,6 +83,7 @@ def is_anki_running():
             continue
     return False
 
+
 def read_file(filepath):
     filetype = filepath.split(".")[-1].lower()
 
@@ -88,31 +93,36 @@ def read_file(filepath):
     else:
         print(f"Filetype '{filetype}' is not supported. Please use another filetype.")
 
+
 def read_txt(filepath):
-    with open(filepath, 'r', encoding='utf-8') as file:
+    with open(filepath, "r", encoding="utf-8") as file:
         return file.read()
+
 
 def read_docx(filepath):
     doc = docx.Document(filepath)
     return "\n".join([para.text for para in doc.paragraphs])
 
+
 def read_pdf(filepath):
     text = ""
     with pdfplumber.open(filepath) as pdf:
         for page in pdf.pages:
-            text += page.extract_text() or ''
+            text += page.extract_text() or ""
     return text
 
+
 def read_csv(filepath):
-    with open(filepath, newline='', encoding='utf-8') as csvfile:
+    with open(filepath, newline="", encoding="utf-8") as csvfile:
         reader = csv.reader(csvfile)
         return "\n".join([", ".join(row) for row in reader])
 
+
 handlers = {
-    'txt': read_txt,
-    'docx': read_docx,
-    'pdf': read_pdf,
-    'csv': read_csv,
+    "txt": read_txt,
+    "docx": read_docx,
+    "pdf": read_pdf,
+    "csv": read_csv,
 }
 
 
