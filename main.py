@@ -17,17 +17,20 @@ if __name__ == "__main__":
 
 
 
-    topic = "deck for learning finnish grammar"
-    use_file = "n"
-    deck_name = "finnish"
-    card_amount = "5"
-    text = "None"
+    use_inputs = False
 
-    # topic = input("deck topic(s): ")
-    # use_file = input("use file to base cards on? (Y/N): ")
-    # deck_name = input("deck name: ")
-    # card_amount = str(input("amount of cards to generate: "))
-    # text = input("further description for what the cards should be based on (or leave empty): ")
+    if use_inputs:
+        topic = input("deck topic(s): ")
+        use_file = input("use file to base cards on? (Y/N): ")
+        deck_name = input("deck name: ")
+        card_amount = str(input("amount of cards to generate: "))
+        text = input("further description for what the cards should be based on (or leave empty): ")
+    else: 
+        topic = config["topic"]
+        use_file = config["use_file"]
+        deck_name = config["deck_name"]
+        card_amount = config["card_amount"]
+        text = config["text"]
 
 
 
@@ -43,8 +46,10 @@ if __name__ == "__main__":
     # {"front": "2 + 2", "back": "4", "tags": topic},
     # {"front": "Python creator?", "back": "Guido van Rossum", "tags": topic}
     # ]
-
-    filled_prompt = prompts["generate_flashcards"].replace("{{topic}}", topic).replace("{{text}}", text).replace("{{card_amount}}", card_amount)
-    cards_to_add = ai_handler.prompt_ai(filled_prompt, model=config["model"])
+    cards_total = [] #fix this
+    for text_chunk in chunked_text:
+        filled_prompt = prompts["generate_flashcards"].replace("{{topic}}", topic).replace("{{text}}", text).replace("{{card_amount}}", card_amount)
+        cards_to_add = ai_handler.prompt_ai(filled_prompt, model=config["model"])
+        cards_total.append(cards_to_add)
     file_handler.create_json_file(cards_to_add)
     anki_api_handler.add_cards(deck_name, file_handler.read_json_file("cards.json"))
