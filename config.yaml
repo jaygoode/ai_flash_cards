@@ -4,12 +4,14 @@ filepaths:
   memory_fp: "./memory.yaml"
   anki_path: "C:\\Users\\johnn\\AppData\\Local\\Programs\\Anki\\anki.exe"
   files_path: "C:\\repos\\ai_flash_cards\\files"
-# model: "deepseek-r1"
-model: "mistral"
+  text_file: "C:\\repos\\ai_flash_cards\\files\\JÄÄKÄRIJOUKKUEEN+JA+RYHMÄN+KÄSIK_2018_s106_Ryhmän_ryhmittäminen_puolustukseen.pdf"
+
+model: "deepseek-r1"
+# model: "mistral"
 
 options:
   topic: "deck for learning finnish grammar"
-  use_file: "n"
+  use_file: "y"
   deck_name: "finnish"
   card_amount: "5"
   text: "None"

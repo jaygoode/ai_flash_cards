@@ -9,24 +9,53 @@ import pdfplumber
 import tiktoken
 
 
-def create_json_file(text: str):
-    pattern = re.compile(r"\[.*?\]", re.DOTALL)
-    match = pattern.search(text)
-    if match:
-        raw_json_str = match.group(0)
-        cleaned_json_str = clean_malformed_json(raw_json_str)
-        try:
-            data = json.loads(cleaned_json_str)
-        except:
-            breakpoint()
+def create_json_file(filename:str) -> None:
+    with open(filename, "w", encoding="utf-8") as f:
+        json.dump({}, f, ensure_ascii=False, indent=4)
 
-        with open("cards.json", "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=2)
+    print(f"JSON successfully saved to '{filename}'")
 
-        print("JSON successfully extracted and saved to 'cards.json'")
+def append_to_json_file(json_str: str, topic:str, deck_name:str) -> None:
+    filename = f"./decks/{topic}_{deck_name}.json"
+    
+    try:
+        new_data = json.loads(json_str)
+        if not isinstance(new_data, list):
+            print("new data is not a list. skipping..")
+            return False
+    except Exception as e:
+        print(f"Error parsing JSON: {e}")
+        return False
+
+    breakpoint()
+    if not os.path.exists(filename):
+        create_json_file(filename)
+        existing_data = []
     else:
-        print("No JSON found in the text.")
+        with open(filename, "r", encoding="utf-8") as f:
+            try:
+                existing_data = json.load(f)
+                if not isinstance(existing_data, list):
+                    raise ValueError("Existing file is not a list.")
+            except Exception:
+                existing_data = []
+        
+    existing_data.extend(new_data)
 
+    with open(filename, "w", encoding="utf-8") as f:
+        json.dump(existing_data, f, indent=2, ensure_ascii=False)
+
+    print(f"Appended {len(new_data)} entries to '{filename}'")
+    return filename
+
+def extract_json(str):
+    pattern = re.compile(r"\[.*?\]", re.DOTALL)
+    match = pattern.search(str)
+    if match:
+        return match.group(0)
+    else:
+        print("No JSON found in the text. moving to next..")
+    return False
 
 def clean_malformed_json(json_str):
     json_str = json_str.replace("\\", "").replace("\n", "").replace("  ", "")
@@ -48,6 +77,17 @@ def clean_malformed_json(json_str):
 
     return json_str
 
+def text_to_dict(text):
+    cards = []
+    for block in text.strip().split("\n\n"):
+        lines = block.strip().splitlines()
+        card = {
+            "front": lines[0].split(":", 1)[1].strip(),
+            "back": lines[1].split(":", 1)[1].strip(),
+            "tags": lines[2].split(":", 1)[1].strip()
+        }
+        cards.append(card)
+    return cards
 
 def read_json_file(filepath: str) -> dict:
     with open(filepath, "r", encoding="utf-8") as f:
@@ -126,20 +166,17 @@ handlers = {
 }
 
 
-def chunk_text(text, max_tokens=3000, model_name="gpt-3.5-turbo"):
+def chunk_text(text, max_tokens=3000):
     """
-    Splits text into chunks that fit within the max_tokens limit.
-    Returns a list of text chunks.
+    Yields text chunks that fit within the max_tokens limit.
 
     Args:
         text (str): The full text to split.
         max_tokens (int): Maximum tokens per chunk (adjust to model's limit minus response).
-        model_name (str): Model used to select tokenizer (supports OpenAI tokenizer names).
+        model_name (str): Model used to select tokenizer (not currently used here).
     """
-    enc = tiktoken.encoding_for_model(model_name)
-
+    enc = tiktoken.get_encoding("cl100k_base")
     words = text.split()
-    chunks = []
     current_chunk = []
 
     for word in words:
@@ -147,10 +184,8 @@ def chunk_text(text, max_tokens=3000, model_name="gpt-3.5-turbo"):
         tokens = enc.encode(" ".join(current_chunk))
         if len(tokens) > max_tokens:
             current_chunk.pop()
-            chunks.append(" ".join(current_chunk))
+            yield " ".join(current_chunk)
             current_chunk = [word]
 
     if current_chunk:
-        chunks.append(" ".join(current_chunk))
-
-    return chunks
+        yield " ".join(current_chunk)

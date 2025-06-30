@@ -3,7 +3,7 @@ import file_handler
 import anki_api_handler
 import subprocess
 import os
-
+import re
 
 if __name__ == "__main__":
     config = file_handler.read_yaml_file("config.yaml")
@@ -35,27 +35,45 @@ if __name__ == "__main__":
         card_amount = config["options"]["card_amount"]
         text = config["options"]["text"]
 
+
     if use_file.lower() is any(["yes", "y"]):
-        filename_key = input("yaml filename key value: ")
-        filepath = config["filepaths"][filename_key]
+        if use_inputs:
+            filename_key = input("yaml filename key value: ")
+            filepath = config["filepaths"][filename_key]
+        else:
+            filepath = config["filepaths"]["text_file"]
+
         text = "create cards based on this text: \n"
         text += file_handler.read_file(filepath)
-        chunked_text = file_handler.chunk_text(text, model_name=config["model"])
 
     # cards_to_add = [
     # {"front": "Capital of France?", "back": "Paris", "tags": topic},
     # {"front": "2 + 2", "back": "4", "tags": topic},
     # ]
 
-    cards_total = []  # fix this
-    for text_chunk in chunked_text:
+    json_str_cards = []
+    #calculate the amount of cards needed per chunk, we cant use yield in this case.. prompt ai should maybe just generate one card per prompt. instead of generating 20 and one has a structure error which crashes the whole batch., or we split them before sending to json formatter
+    for chunk in file_handler.chunk_text(text):
         filled_prompt = (
-            prompts["generate_flashcards"]
+            prompts["generate_flashcards1"]
             .replace("{{topic}}", topic)
-            .replace("{{text}}", text)
+            .replace("{{text}}", chunk)
             .replace("{{card_amount}}", card_amount)
         )
         cards_to_add = ai_handler.prompt_ai(filled_prompt, model=config["model"])
-        cards_total.append(cards_to_add)
-    file_handler.create_json_file(cards_to_add)
-    anki_api_handler.add_cards(deck_name, file_handler.read_json_file("cards.json"))
+
+        breakpoint()
+        # raw_json_str = file_handler.extract_json(cards_to_add) #extract the json part of LLM response
+        deck_dict = file_handler.text_to_dict(cards_to_add) #extract the json part of LLM response
+
+        if not deck_dict:
+            continue
+
+        # cleaned_card_json_str = file_handler.clean_malformed_json(raw_json_str) 
+
+        # json_str_cards.append(cleaned_card_json_str)
+
+        filename = file_handler.append_to_json_file(cleaned_card_json_str, topic, deck_name)
+        if not filename:
+            continue
+        anki_api_handler.add_cards(deck_name, file_handler.read_json_file(filename))

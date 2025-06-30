@@ -24,3 +24,34 @@ generate_flashcards: |
   ]
 
   Do not explain your reasoning or include anything outside the list. Only return the list of flashcards.
+
+generate_flashcards1: |
+  You are an expert educational content creator and flashcard generator.
+
+  Task: Create {{card_amount}} high-quality flashcards. Each flashcard should contain:
+  - front: a clear and concise question or prompt
+  - back: an accurate, informative answer
+  - tags: "{{topic}}"
+
+  Context:
+  - If {{text}} is not "None", use it as the sole source for content generation.
+  - If {{text}} is "None", use general knowledge of "{{topic}}" to generate relevant flashcards.
+
+  Guidelines:
+  - Focus on essential, testable information.
+  - Ensure accuracy using internal tools or web search (if available).
+  - Use simple, learner-friendly phrasing.
+  - Avoid repeating content across cards.
+
+  Output format:
+  Return flashcards in the following format, one after another, separated by a blank line:
+
+  Front: What is an example question?
+  Back: This is the correct answer.
+  Tags: {{topic}}
+
+  Front: ...
+  Back: ...
+  Tags: ...
+
+  Do not explain your reasoning or include anything other than the flashcard content in this format.
