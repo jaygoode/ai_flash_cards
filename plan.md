@@ -9,3 +9,5 @@ fix this readme
 -add fonts, text color, and other jazz to cards
 -image gen
 -find llm that actually understands finnish language for studying, or fix prompt? maybe ask to base answers on some books?
+
+-add options for what type of cards to study - learn finnish enum to study finnish prompt, tactics, maths memory etccc...

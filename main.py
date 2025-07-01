@@ -35,7 +35,6 @@ if __name__ == "__main__":
         card_amount = config["options"]["card_amount"]
         text = config["options"]["text"]
 
-    breakpoint()
     if use_file.lower() in ["yes", "y"]:
         if use_inputs:
             filename_key = input("yaml filename key value: ")
@@ -69,7 +68,7 @@ if __name__ == "__main__":
 
         cleaned_card_json_str = file_handler.clean_malformed_json(raw_json_str) 
         list_of_cards_dicts = file_handler.format_and_split_cards(raw_json_str) 
-
+        breakpoint()
         filename = file_handler.append_to_json_file(list_of_cards_dicts, topic, deck_name)
         if not filename:
             continue

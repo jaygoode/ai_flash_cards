@@ -25,14 +25,17 @@ def ensure_deck_exists(deck_name):
 def add_cards(deck_name, cards):
     ensure_deck_exists(deck_name)
     for card in cards:
-        note = {
-            "deckName": deck_name,
-            "modelName": "Basic",
-            "fields": {"Front": card["front"], "Back": card["back"]},
-            "tags": card.get("tags", []),
-        }
-        response = invoke("addNote", {"note": note})
-        if response.get("error"):
-            print(f"Failed to add card: {card['front']} → {response['error']}")
-        else:
-            print(f"Added card: {card['front']}")
+        try:
+            note = {
+                "deckName": deck_name,
+                "modelName": "Basic",
+                "fields": {"Front": card["front"], "Back": card["back"]},
+                "tags": card.get("tags", []),
+            }
+            response = invoke("addNote", {"note": note})
+            if response.get("error"):
+                print(f"Failed to add card: {card['front']} → {response['error']}")
+            else:
+                print(f"Added card: {card['front']}")
+        except Exception as err:
+            print(f"failed to add card - {err}")

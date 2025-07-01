@@ -20,6 +20,8 @@ def format_and_split_cards(cards_json):
                 card_str = card_str + "}"
             if card_str[0] != "{":
                 card_str = "{" + card_str
+            if card_str == "{}":
+                continue
             cards_as_dicts.append(json.loads(card_str))
         except Exception as err:
             print(f"creating card dict failed. {err}")
