@@ -36,7 +36,7 @@ if __name__ == "__main__":
         text = config["options"]["text"]
 
     breakpoint()
-    if use_file.lower() is any(["yes", "y"]):
+    if use_file.lower() in ["yes", "y"]:
         if use_inputs:
             filename_key = input("yaml filename key value: ")
             filepath = config["filepaths"][filename_key]
