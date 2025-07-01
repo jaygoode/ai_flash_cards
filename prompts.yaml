@@ -24,6 +24,7 @@ generate_flashcards: |
   ]
 
   Do not explain your reasoning or include anything outside the list. Only return the list of flashcards.
+  Do not use double quotes inside the text for the values.
 
 generate_flashcards1: |
   You are an expert educational content creator and flashcard generator.

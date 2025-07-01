@@ -8,6 +8,7 @@ filepaths:
 
 model: "deepseek-r1"
 # model: "mistral"
+simple_reply_format: False
 
 options:
   topic: "deck for learning finnish grammar"

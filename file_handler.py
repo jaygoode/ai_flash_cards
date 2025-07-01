@@ -8,6 +8,23 @@ import csv
 import pdfplumber
 import tiktoken
 
+def format_and_split_cards(cards_json):
+    split_cards = cards_json.split("\n")
+    cards_as_dicts = []
+    for card_str in split_cards:
+        card_str = card_str.strip()
+        try:
+            if card_str[-1] == ",":
+                card_str = card_str[:-1]
+            if card_str[-1] != "}":
+                card_str = card_str + "}"
+            if card_str[0] != "{":
+                card_str = "{" + card_str
+            cards_as_dicts.append(json.loads(card_str))
+        except Exception as err:
+            print(f"creating card dict failed. {err}")
+
+    return cards_as_dicts
 
 def create_json_file(filename:str) -> None:
     with open(filename, "w", encoding="utf-8") as f:
@@ -15,19 +32,9 @@ def create_json_file(filename:str) -> None:
 
     print(f"JSON successfully saved to '{filename}'")
 
-def append_to_json_file(json_str: str, topic:str, deck_name:str) -> None:
+def append_to_json_file(cards_dicts: list[dict], topic:str, deck_name:str) -> None:
     filename = f"./decks/{topic}_{deck_name}.json"
     
-    try:
-        new_data = json.loads(json_str)
-        if not isinstance(new_data, list):
-            print("new data is not a list. skipping..")
-            return False
-    except Exception as e:
-        print(f"Error parsing JSON: {e}")
-        return False
-
-    breakpoint()
     if not os.path.exists(filename):
         create_json_file(filename)
         existing_data = []
@@ -40,12 +47,12 @@ def append_to_json_file(json_str: str, topic:str, deck_name:str) -> None:
             except Exception:
                 existing_data = []
         
-    existing_data.extend(new_data)
+    existing_data.extend(cards_dicts)
 
     with open(filename, "w", encoding="utf-8") as f:
         json.dump(existing_data, f, indent=2, ensure_ascii=False)
 
-    print(f"Appended {len(new_data)} entries to '{filename}'")
+    print(f"Appended {len(cards_dicts)} entries to '{filename}'")
     return filename
 
 def extract_json(str):
@@ -58,7 +65,8 @@ def extract_json(str):
     return False
 
 def clean_malformed_json(json_str):
-    json_str = json_str.replace("\\", "").replace("\n", "").replace("  ", "")
+    # json_str = json_str.replace("\\", "").replace("\n", "").replace("  ", "")
+    json_str = json_str.replace("\\", "").replace("  ", "")
     # Replace ellipses `...` with a placeholder
     json_str = json_str.replace("...", "[truncated]")
 

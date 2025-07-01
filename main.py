@@ -55,25 +55,33 @@ if __name__ == "__main__":
     #calculate the amount of cards needed per chunk, we cant use yield in this case.. prompt ai should maybe just generate one card per prompt. instead of generating 20 and one has a structure error which crashes the whole batch., or we split them before sending to json formatter
     for chunk in file_handler.chunk_text(text):
         filled_prompt = (
-            prompts["generate_flashcards1"]
+            prompts["generate_flashcards"]
             .replace("{{topic}}", topic)
             .replace("{{text}}", chunk)
             .replace("{{card_amount}}", card_amount)
         )
         cards_to_add = ai_handler.prompt_ai(filled_prompt, model=config["model"])
 
-        breakpoint()
-        # raw_json_str = file_handler.extract_json(cards_to_add) #extract the json part of LLM response
-        deck_dict = file_handler.text_to_dict(cards_to_add) #extract the json part of LLM response
+        raw_json_str = file_handler.extract_json(cards_to_add) #extract the json part of LLM response
 
-        if not deck_dict:
+        if not raw_json_str:
             continue
 
-        # cleaned_card_json_str = file_handler.clean_malformed_json(raw_json_str) 
+        cleaned_card_json_str = file_handler.clean_malformed_json(raw_json_str) 
+        list_of_cards_dicts = file_handler.format_and_split_cards(raw_json_str) 
 
-        # json_str_cards.append(cleaned_card_json_str)
-
-        filename = file_handler.append_to_json_file(cleaned_card_json_str, topic, deck_name)
+        filename = file_handler.append_to_json_file(list_of_cards_dicts, topic, deck_name)
         if not filename:
             continue
         anki_api_handler.add_cards(deck_name, file_handler.read_json_file(filename))
+        
+        # if config["simple_reply_format"]: #add enums for different response types?
+        #     deck_dict = file_handler.text_to_dict(cards_to_add) #extract the json part of LLM response
+        #     if not deck_dict:
+        #         continue
+        #     filename = file_handler.change_to_json_format(cleaned_card_json_str, topic, deck_name)
+        #     if not filename:
+        #         continue
+        #     anki_api_handler.add_cards(deck_name, file_handler.read_json_file(filename))
+
+    print("card creation done!")
