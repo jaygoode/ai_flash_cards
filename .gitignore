@@ -1,6 +1,9 @@
 files/*
+decks/*
 .env
 env
 .venv
 __pycache__/
 __pycache__
+*.json
+.ruff_cache
