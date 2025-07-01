@@ -35,7 +35,7 @@ if __name__ == "__main__":
         card_amount = config["options"]["card_amount"]
         text = config["options"]["text"]
 
-
+    breakpoint()
     if use_file.lower() is any(["yes", "y"]):
         if use_inputs:
             filename_key = input("yaml filename key value: ")
@@ -84,4 +84,4 @@ if __name__ == "__main__":
         #         continue
         #     anki_api_handler.add_cards(deck_name, file_handler.read_json_file(filename))
 
-    print("card creation done!")
+    print(f"card creation done! deck name: {deck_name}, topic: {topic}, cards created: {len(list_of_cards_dicts)}")
