@@ -8,7 +8,8 @@ filepaths:
 
 # model: "deepseek-r1"
 # model: "mistral"
-model: "poro-34b-chat"
+# model: "poro-34b-chat"
+model: "akx/viking-7b"
 simple_reply_format: False
 
 options:
