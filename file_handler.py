@@ -9,23 +9,26 @@ import pdfplumber
 import tiktoken
 
 def format_and_split_cards(cards_json):
-    split_cards = cards_json.split("\n")
+    # split_cards = cards_json.split("\n")
     cards_as_dicts = []
+    split_cards = re.findall(r"\{[^{}]*\}", cards_json)
     for card_str in split_cards:
-        card_str = card_str.strip()
-        try:
-            if card_str[-1] == ",":
-                card_str = card_str[:-1]
-            if card_str[-1] != "}":
-                card_str = card_str + "}"
-            if card_str[0] != "{":
-                card_str = "{" + card_str
-            if card_str == "{}":
-                continue
-            cards_as_dicts.append(json.loads(card_str))
-        except Exception as err:
-            print(f"creating card dict failed. {err}")
+        if not all(key in card_str for key in ["front", "back", "tags"]):
+            print(f"card '{card_str}' is missing required keys and will be skipped." )
+            continue
 
+        card_str = card_str.strip()
+        if card_str[-1] == ",":
+            card_str = card_str[:-1]
+        if card_str[-1] != "}":
+            card_str = card_str + "}"
+        if card_str[0] != "{":
+            card_str = "{" + card_str
+        if card_str == "{}":
+            continue
+        cards_as_dicts.append(json.loads(card_str))
+
+    print(f"successfully formatted {len(cards_as_dicts)}/{len(split_cards)} cards")
     return cards_as_dicts
 
 def create_json_file(filename:str) -> None:

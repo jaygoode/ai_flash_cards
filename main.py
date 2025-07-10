@@ -22,18 +22,17 @@ if __name__ == "__main__":
     use_inputs = False
     options = helpers.get_settings(use_inputs, config, file_handler=file_handler)
     
-
     # cards_to_add = [
     # {"front": "Capital of France?", "back": "Paris", "tags": topic},
     # {"front": "2 + 2", "back": "4", "tags": topic},
     # ]
 
     for chunk in file_handler.chunk_text(options["topic"]):
-        filename = helpers.generate_cards(options, config)
-
-    anki_api_handler.add_cards(options["deck_name"], file_handler.read_json_file(filename))
+        filename = helpers.generate_cards(options, config, prompts, chunk)
+    cards = file_handler.read_json_file(filename)
+    anki_api_handler.add_cards(options["deck_name"], cards)
 
         
         
 
-    # print(f"card creation done! deck name: {options["deck_name"]}, topic: {options["topic"]}, cards created: {len(list_of_cards_dicts)}")
+    print(f"card creation done! deck name: {options["deck_name"]}, topic: {options["topic"]}, cards created: {len(cards)}")

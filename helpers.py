@@ -30,7 +30,7 @@ def get_settings(use_inputs, config, file_handler):
 
     return options
 
-@retry(stop=stop_after_attempt(3), wait=wait_fixed(2))
+@retry(stop=stop_after_attempt(5), wait=wait_fixed(2))
 def generate_cards(options, config, prompts, chunk):
     filled_prompt = (
         prompts["generate_flashcards"]
@@ -38,9 +38,9 @@ def generate_cards(options, config, prompts, chunk):
         .replace("{{text}}", chunk)
         .replace("{{card_amount}}", options["card_amount"])
     )
+    print(f"topic:{options["topic"]}, card amount: {options["card_amount"]}")
     cards_to_add_response = ai_handler.prompt_ai(filled_prompt, model=config["model"])
     raw_json_str = file_handler.extract_json(cards_to_add_response) #extract the json part of LLM response
-
     list_of_cards_dicts = file_handler.format_and_split_cards(raw_json_str) 
     filename = file_handler.append_to_json_file(list_of_cards_dicts, options["topic"], options["deck_name"])
     

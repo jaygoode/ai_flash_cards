@@ -16,7 +16,7 @@ def prompt_ai(prompt, model="llama2", system_prompt="you are a senior level prof
                 {'role': 'user', 'content': prompt}
             ])
         else:
-            raise  
+            raise Exception
     return response['message']['content']
 
 

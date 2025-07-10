@@ -6,15 +6,15 @@ filepaths:
   files_path: "C:\\repos\\ai_flash_cards\\files"
   text_file: "C:\\repos\\ai_flash_cards\\files\\JÄÄKÄRIJOUKKUEEN+JA+RYHMÄN+KÄSIK_2018_s106_Ryhmän_ryhmittäminen_puolustukseen.pdf"
 
-# model: "deepseek-r1"
+model: "deepseek-r1"
 # model: "mistral"
 # model: "poro-34b-chat"
-model: "akx/viking-7b"
+# model: "akx/viking-7b"
 simple_reply_format: False
 
 options:
-  topic: "deck for learning finnish grammar"
+  topic: "deck for learning finnish words, from english to finnish"
   use_file: "y"
-  deck_name: "finnish"
+  deck_name: "finnish1"
   card_amount: "5"
   text: "None"
