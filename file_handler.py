@@ -42,12 +42,9 @@ def append_to_json_file(cards_dicts: list[dict], topic:str, deck_name:str) -> No
         existing_data = []
     else:
         with open(filename, "r", encoding="utf-8") as f:
-            try:
-                existing_data = json.load(f)
-                if not isinstance(existing_data, list):
-                    raise ValueError("Existing file is not a list.")
-            except Exception:
-                existing_data = []
+            existing_data = json.load(f)
+            if not isinstance(existing_data, list):
+                raise ValueError("Existing file is not a list.")
         
     existing_data.extend(cards_dicts)
 
@@ -63,9 +60,8 @@ def extract_json(str):
     if match:
         return match.group(0)
     else:
-        print("No JSON found in the text. moving to next..")
-    return False
-
+        raise Exception
+    
 def clean_malformed_json(json_str):
     # json_str = json_str.replace("\\", "").replace("\n", "").replace("  ", "")
     json_str = json_str.replace("\\", "").replace("  ", "")

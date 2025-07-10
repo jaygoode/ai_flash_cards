@@ -1,3 +1,6 @@
+import file_handler, ai_handler
+from tenacity import retry, stop_after_attempt, wait_fixed
+
 def get_settings(use_inputs, config, file_handler):
     options = {}
     if use_inputs:
@@ -27,7 +30,8 @@ def get_settings(use_inputs, config, file_handler):
 
     return options
 
-def generate_cards(options, config, prompts, anki_api_handler, file_handler, ai_handler):
+@retry(stop=stop_after_attempt(3), wait=wait_fixed(2))
+def generate_cards(options, config, prompts, chunk):
     filled_prompt = (
         prompts["generate_flashcards"]
         .replace("{{topic}}", options["topic"])
@@ -35,16 +39,18 @@ def generate_cards(options, config, prompts, anki_api_handler, file_handler, ai_
         .replace("{{card_amount}}", options["card_amount"])
     )
     cards_to_add = ai_handler.prompt_ai(filled_prompt, model=config["model"])
-
     raw_json_str = file_handler.extract_json(cards_to_add) #extract the json part of LLM response
 
-    if not raw_json_str:
-        None
-
-    cleaned_card_json_str = file_handler.clean_malformed_json(raw_json_str) 
     list_of_cards_dicts = file_handler.format_and_split_cards(raw_json_str) 
-    breakpoint()
     filename = file_handler.append_to_json_file(list_of_cards_dicts, options["topic"], options["deck_name"])
-    if not filename:
-        None
-    anki_api_handler.add_cards(options["deck_name"], file_handler.read_json_file(filename))
+    
+    if config["simple_reply_format"]: #add enums for different response types?
+        cleaned_card_json_str = file_handler.clean_malformed_json(raw_json_str) 
+        deck_dict = file_handler.text_to_dict(cards_to_add) #extract the json part of LLM response
+        if not deck_dict:
+            return None
+        filename = file_handler.change_to_json_format(cleaned_card_json_str, options["topic"], options["deck_name"])
+        if not filename:
+            return None
+        
+    return filename
