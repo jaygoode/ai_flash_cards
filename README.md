@@ -1,14 +1,3 @@
 # ai_flash_cards
 
 flash card api tool with the new ai protocol MCP
--read youtube videos -get subtitles or transcript, create flashcards
--options to choose which type of grammar or word types to create from, verbs adjectives etc 
-
-build tests
-fix this readme 
--fix file reader
-
--download chatgpt conversations for basis of cards
--add fonts, text color, and other jazz to cards
--image gen
--find llm that actually understands finnish language for studying
