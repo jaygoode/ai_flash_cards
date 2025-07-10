@@ -6,8 +6,9 @@ filepaths:
   files_path: "C:\\repos\\ai_flash_cards\\files"
   text_file: "C:\\repos\\ai_flash_cards\\files\\JÄÄKÄRIJOUKKUEEN+JA+RYHMÄN+KÄSIK_2018_s106_Ryhmän_ryhmittäminen_puolustukseen.pdf"
 
-model: "deepseek-r1"
+# model: "deepseek-r1"
 # model: "mistral"
+model: "poro-34b-chat"
 simple_reply_format: False
 
 options:

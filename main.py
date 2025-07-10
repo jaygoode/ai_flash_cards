@@ -20,7 +20,7 @@ if __name__ == "__main__":
         print("Opening Anki failed. Might already be running.")
 
     use_inputs = False
-    options = helpers.get_settings(use_inputs)
+    options = helpers.get_settings(use_inputs, config, file_handler=file_handler)
     
 
     # cards_to_add = [
