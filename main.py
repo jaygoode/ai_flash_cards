@@ -28,11 +28,10 @@ if __name__ == "__main__":
     # {"front": "2 + 2", "back": "4", "tags": topic},
     # ]
 
-    json_str_cards = []
-    #calculate the amount of cards needed per chunk, we cant use yield in this case.. prompt ai should maybe just generate one card per prompt. instead of generating 20 and one has a structure error which crashes the whole batch., or we split them before sending to json formatter
     for chunk in file_handler.chunk_text(options["topic"]):
-        helpers.generate_cards(options, config)
-        anki_api_handler.add_cards(options["deck_name"], file_handler.read_json_file(filename))
+        filename = helpers.generate_cards(options, config)
+
+    anki_api_handler.add_cards(options["deck_name"], file_handler.read_json_file(filename))
 
         
         

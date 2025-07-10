@@ -38,19 +38,19 @@ def generate_cards(options, config, prompts, chunk):
         .replace("{{text}}", chunk)
         .replace("{{card_amount}}", options["card_amount"])
     )
-    cards_to_add = ai_handler.prompt_ai(filled_prompt, model=config["model"])
-    raw_json_str = file_handler.extract_json(cards_to_add) #extract the json part of LLM response
+    cards_to_add_response = ai_handler.prompt_ai(filled_prompt, model=config["model"])
+    raw_json_str = file_handler.extract_json(cards_to_add_response) #extract the json part of LLM response
 
     list_of_cards_dicts = file_handler.format_and_split_cards(raw_json_str) 
     filename = file_handler.append_to_json_file(list_of_cards_dicts, options["topic"], options["deck_name"])
     
-    if config["simple_reply_format"]: #add enums for different response types?
-        cleaned_card_json_str = file_handler.clean_malformed_json(raw_json_str) 
-        deck_dict = file_handler.text_to_dict(cards_to_add) #extract the json part of LLM response
-        if not deck_dict:
-            return None
-        filename = file_handler.change_to_json_format(cleaned_card_json_str, options["topic"], options["deck_name"])
-        if not filename:
-            return None
+    # if config["simple_reply_format"]: #add enums for different response types?
+    #     cleaned_card_json_str = file_handler.clean_malformed_json(raw_json_str) 
+    #     deck_dict = file_handler.text_to_dict(cards_to_add) #extract the json part of LLM response
+    #     if not deck_dict:
+    #         raise Exception
+    #     filename = file_handler.change_to_json_format(cleaned_card_json_str, options["topic"], options["deck_name"])
+    #     if not filename:
+    #         raise Exception
         
     return filename
