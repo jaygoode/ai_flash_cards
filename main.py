@@ -52,13 +52,14 @@ if __name__ == "__main__":
             continue
         anki_api_handler.add_cards(options["deck_name"], file_handler.read_json_file(filename))
         
-        # if config["simple_reply_format"]: #add enums for different response types?
-        #     deck_dict = file_handler.text_to_dict(cards_to_add) #extract the json part of LLM response
-        #     if not deck_dict:
-        #         continue
-        #     filename = file_handler.change_to_json_format(cleaned_card_json_str, topic, deck_name)
-        #     if not filename:
-        #         continue
-        #     anki_api_handler.add_cards(deck_name, file_handler.read_json_file(filename))
+        if config["simple_reply_format"]: #add enums for different response types?
+            continue
+            deck_dict = file_handler.text_to_dict(cards_to_add) #extract the json part of LLM response
+            if not deck_dict:
+                continue
+            filename = file_handler.change_to_json_format(cleaned_card_json_str, options["topic"], options["deck_name"])
+            if not filename:
+                continue
+            anki_api_handler.add_cards(options["deck_name"], file_handler.read_json_file(filename))
 
     print(f"card creation done! deck name: {options["deck_name"]}, topic: {options["topic"]}, cards created: {len(list_of_cards_dicts)}")
