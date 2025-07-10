@@ -1,12 +1,14 @@
-import docx
-import psutil
-import json
-import re
-import yaml
-import os
 import csv
+import json
+import os
+import re
+
+import docx
 import pdfplumber
+import psutil
 import tiktoken
+import yaml
+
 
 def format_and_split_cards(cards_json):
     # split_cards = cards_json.split("\n")
@@ -14,7 +16,7 @@ def format_and_split_cards(cards_json):
     split_cards = re.findall(r"\{[^{}]*\}", cards_json)
     for card_str in split_cards:
         if not all(key in card_str for key in ["front", "back", "tags"]):
-            print(f"card '{card_str}' is missing required keys and will be skipped." )
+            print(f"card '{card_str}' is missing required keys and will be skipped.")
             continue
 
         card_str = card_str.strip()
@@ -31,15 +33,17 @@ def format_and_split_cards(cards_json):
     print(f"successfully formatted {len(cards_as_dicts)}/{len(split_cards)} cards")
     return cards_as_dicts
 
-def create_json_file(filename:str) -> None:
+
+def create_json_file(filename: str) -> None:
     with open(filename, "w", encoding="utf-8") as f:
         json.dump({}, f, ensure_ascii=False, indent=4)
 
     print(f"JSON successfully saved to '{filename}'")
 
-def append_to_json_file(cards_dicts: list[dict], topic:str, deck_name:str) -> None:
+
+def append_to_json_file(cards_dicts: list[dict], topic: str, deck_name: str) -> None:
     filename = f"./decks/{topic}_{deck_name}.json"
-    
+
     if not os.path.exists(filename):
         create_json_file(filename)
         existing_data = []
@@ -48,7 +52,7 @@ def append_to_json_file(cards_dicts: list[dict], topic:str, deck_name:str) -> No
             existing_data = json.load(f)
             if not isinstance(existing_data, list):
                 raise ValueError("Existing file is not a list.")
-        
+
     existing_data.extend(cards_dicts)
 
     with open(filename, "w", encoding="utf-8") as f:
@@ -57,6 +61,7 @@ def append_to_json_file(cards_dicts: list[dict], topic:str, deck_name:str) -> No
     print(f"Appended {len(cards_dicts)} entries to '{filename}'")
     return filename
 
+
 def extract_json(str):
     pattern = re.compile(r"\[.*?\]", re.DOTALL)
     match = pattern.search(str)
@@ -64,7 +69,8 @@ def extract_json(str):
         return match.group(0)
     else:
         raise Exception
-    
+
+
 def clean_malformed_json(json_str):
     # json_str = json_str.replace("\\", "").replace("\n", "").replace("  ", "")
     json_str = json_str.replace("\\", "").replace("  ", "")
@@ -86,6 +92,7 @@ def clean_malformed_json(json_str):
 
     return json_str
 
+
 def text_to_dict(text):
     cards = []
     for block in text.strip().split("\n\n"):
@@ -93,10 +100,11 @@ def text_to_dict(text):
         card = {
             "front": lines[0].split(":", 1)[1].strip(),
             "back": lines[1].split(":", 1)[1].strip(),
-            "tags": lines[2].split(":", 1)[1].strip()
+            "tags": lines[2].split(":", 1)[1].strip(),
         }
         cards.append(card)
     return cards
+
 
 def read_json_file(filepath: str) -> dict:
     with open(filepath, "r", encoding="utf-8") as f:

@@ -1,5 +1,5 @@
+
 import requests
-import json
 
 ANKI_CONNECT_URL = "http://localhost:8765"
 
@@ -9,7 +9,7 @@ def invoke(action, params={}):
         return requests.post(
             ANKI_CONNECT_URL, json={"action": action, "version": 6, "params": params}
         ).json()
-    except:
+    except Exception:
         print("anki api invoke failed.")
 
 
@@ -39,4 +39,3 @@ def add_cards(deck_name, cards):
                 print(f"Added card: {card['front']}")
         except Exception as err:
             print(f"failed to add card - {err}")
- 
