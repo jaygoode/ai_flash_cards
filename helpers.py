@@ -5,6 +5,22 @@ import file_handler
 
 
 def get_settings(use_inputs, config, file_handler):
+    """
+    Gather configuration options either from user input or a provided config file.
+
+    Args:
+        use_inputs (bool): If True, prompts the user for input. If False, loads settings from `config`.
+        config (dict): Configuration dictionary containing default options and file paths.
+        file_handler (module): Module for reading input text files.
+
+    Returns:
+        dict: A dictionary containing configuration options such as:
+            - topic (str): The topic(s) for the flashcard deck.
+            - use_file (str): Whether to use a file for text content ("Y"/"N").
+            - deck_name (str): Name of the deck to be created.
+            - card_amount (str): Number of cards to generate.
+            - text (str): Text description or content to base the cards on.
+    """
     options = {}
     if use_inputs:
         options["topic"] = input("deck topic(s): ")
