@@ -213,6 +213,19 @@ def read_yaml_file(filepath: str) -> dict:
 
 
 def write_to_yaml_file(data: dict, filepath: str) -> None:
+    """
+    Write or update a YAML file with the provided dictionary data.
+
+    Args:
+        data (dict): Data to write or merge into the YAML file.
+        filepath (str): Path to the YAML file.
+
+    Returns:
+        None
+
+    Notes:
+        If the file exists, merges existing data with new data before saving.
+    """
     if os.path.exists(filepath):
         with open(filepath, "r") as f:
             existing_data = yaml.safe_load(f) or {}
@@ -226,6 +239,13 @@ def write_to_yaml_file(data: dict, filepath: str) -> None:
 
 
 def is_anki_running():
+    """
+    Check if the Anki application is currently running.
+
+    Returns:
+        bool: True if an Anki process is found, False otherwise.
+    """
+
     for proc in psutil.process_iter(attrs=["name", "exe", "cmdline"]):
         try:
             if "anki" in proc.info["name"].lower():
@@ -236,6 +256,19 @@ def is_anki_running():
 
 
 def read_file(filepath):
+    """
+    Read a file based on its extension using appropriate handler functions.
+
+    Args:
+        filepath (str): Path to the file.
+
+    Returns:
+        str or None: File content as text if supported; otherwise None.
+
+    Side effects:
+        Prints an error message if the file type is unsupported.
+    """
+
     filetype = filepath.split(".")[-1].lower()
 
     handler = handlers.get(filetype)
@@ -246,6 +279,16 @@ def read_file(filepath):
 
 
 def read_txt(filepath):
+    """
+    Read a plain text (.txt) file.
+
+    Args:
+        filepath (str): Path to the text file.
+
+    Returns:
+        str: File contents as a string.
+    """
+
     with open(filepath, "r", encoding="utf-8") as file:
         return file.read()
 
