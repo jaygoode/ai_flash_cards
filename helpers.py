@@ -52,6 +52,35 @@ def get_settings(use_inputs, config, file_handler):
 
 @retry(stop=stop_after_attempt(5), wait=wait_fixed(2))
 def generate_cards(options, config, prompts, chunk):
+    """
+    Generate flashcards based on a given topic and text chunk using AI prompts.
+
+    This function fills a template prompt with user options and a text chunk, sends it to an AI
+    handler to generate flashcards, extracts and formats the resulting JSON, and appends
+    the new cards to a JSON file. The operation is retried up to 5 times with a fixed 2-second wait on failure.
+
+    Args:
+        options (dict): User-defined options including:
+            - "topic" (str): The subject or theme for the flashcards.
+            - "card_amount" (str or int): Number of cards to generate.
+            - "deck_name" (str): Name of the deck file to append cards to.
+        config (dict): Configuration dictionary for AI model and other settings, e.g.:
+            - "model" (str): AI model name to be used for generating prompts.
+        prompts (dict): Dictionary containing prompt templates, expects key:
+            - "generate_flashcards" (str): Prompt template with placeholders {{topic}}, {{text}}, {{card_amount}}.
+        chunk (str): A segment of text to be used as input content for flashcard generation.
+
+    Returns:
+        str: The filename of the JSON file where the generated flashcards were appended.
+
+    Raises:
+        Exception: If AI response JSON extraction or formatting fails (commented out logic indicates possible exceptions).
+
+    Notes:
+        The function uses exponential retry logic from the `retry` decorator to handle transient failures
+        in AI prompt processing or file handling.
+    """
+    
     filled_prompt = (
         prompts["generate_flashcards"]
         .replace("{{topic}}", options["topic"])

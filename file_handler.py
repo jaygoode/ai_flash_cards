@@ -11,7 +11,20 @@ import yaml
 
 
 def format_and_split_cards(cards_json):
-    # split_cards = cards_json.split("\n")
+    """
+    Parse a JSON-like string containing multiple card objects, extract valid cards, and return them as dictionaries.
+
+    Args:
+        cards_json (str): A string containing multiple JSON objects representing flashcards.
+
+    Returns:
+        list of dict: A list of card dictionaries each containing 'front', 'back', and 'tags' keys.
+
+    Notes:
+        - Skips cards missing any of the required keys: 'front', 'back', 'tags'.
+        - Attempts to clean malformed JSON-like strings before parsing.
+    """
+
     cards_as_dicts = []
     split_cards = re.findall(r"\{[^{}]*\}", cards_json)
     for card_str in split_cards:
@@ -35,6 +48,19 @@ def format_and_split_cards(cards_json):
 
 
 def create_json_file(filename: str) -> None:
+    """
+    Create an empty JSON file with an empty dictionary as its content.
+
+    Args:
+        filename (str): Path to the JSON file to create.
+
+    Returns:
+        None
+
+    Side effects:
+        Creates or overwrites the specified JSON file.
+    """
+
     with open(filename, "w", encoding="utf-8") as f:
         json.dump({}, f, ensure_ascii=False, indent=4)
 
@@ -42,6 +68,21 @@ def create_json_file(filename: str) -> None:
 
 
 def append_to_json_file(cards_dicts: list[dict], topic: str, deck_name: str) -> None:
+    """
+    Append a list of card dictionaries to a JSON file named using topic and deck name.
+
+    Args:
+        cards_dicts (list of dict): List of flashcard dictionaries to append.
+        topic (str): Topic name used in filename.
+        deck_name (str): Deck name used in filename.
+
+    Returns:
+        str: The filename to which cards were appended.
+
+    Raises:
+        ValueError: If existing file content is not a list.
+    """
+
     filename = f"./decks/{topic}_{deck_name}.json"
 
     if not os.path.exists(filename):
@@ -63,6 +104,19 @@ def append_to_json_file(cards_dicts: list[dict], topic: str, deck_name: str) -> 
 
 
 def extract_json(str):
+    """
+    Extract the first JSON array found within a string.
+
+    Args:
+        str (str): Input string that may contain a JSON array.
+
+    Returns:
+        str: Extracted JSON array string.
+
+    Raises:
+        Exception: If no JSON array is found in the input string.
+    """
+
     pattern = re.compile(r"\[.*?\]", re.DOTALL)
     match = pattern.search(str)
     if match:
@@ -72,6 +126,16 @@ def extract_json(str):
 
 
 def clean_malformed_json(json_str):
+    """
+    Clean a malformed JSON string by fixing common issues like backslashes, smart quotes, trailing commas, and ellipses.
+
+    Args:
+        json_str (str): The malformed JSON string.
+
+    Returns:
+        str: The cleaned JSON string, ready for parsing.
+    """
+
     # json_str = json_str.replace("\\", "").replace("\n", "").replace("  ", "")
     json_str = json_str.replace("\\", "").replace("  ", "")
     # Replace ellipses `...` with a placeholder
@@ -94,6 +158,16 @@ def clean_malformed_json(json_str):
 
 
 def text_to_dict(text):
+    """
+    Convert specially formatted plaintext flashcards into a list of card dictionaries.
+
+    Args:
+        text (str): Plaintext with blocks separated by double newlines; each block has lines like 'front: ...', 'back: ...', 'tags: ...'.
+
+    Returns:
+        list of dict: List of card dictionaries with keys 'front', 'back', and 'tags'.
+    """
+
     cards = []
     for block in text.strip().split("\n\n"):
         lines = block.strip().splitlines()
@@ -107,12 +181,32 @@ def text_to_dict(text):
 
 
 def read_json_file(filepath: str) -> dict:
+    """
+    Read and parse a JSON file.
+
+    Args:
+        filepath (str): Path to the JSON file.
+
+    Returns:
+        dict: Parsed JSON data.
+    """
+
     with open(filepath, "r", encoding="utf-8") as f:
         data = json.load(f)
     return data
 
 
 def read_yaml_file(filepath: str) -> dict:
+    """
+    Read and parse a YAML file.
+
+    Args:
+        filepath (str): Path to the YAML file.
+
+    Returns:
+        dict: Parsed YAML data.
+    """
+
     with open(filepath, "r", encoding="utf-8") as f:
         data = yaml.safe_load(f)
     return data
