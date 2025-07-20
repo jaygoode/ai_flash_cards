@@ -294,11 +294,31 @@ def read_txt(filepath):
 
 
 def read_docx(filepath):
+    """
+    Read the text content from a Microsoft Word (.docx) file.
+
+    Args:
+        filepath (str): Path to the .docx file.
+
+    Returns:
+        str: Concatenated text content from all paragraphs.
+    """
+
     doc = docx.Document(filepath)
     return "\n".join([para.text for para in doc.paragraphs])
 
 
 def read_pdf(filepath):
+    """
+    Extract text content from a PDF file.
+
+    Args:
+        filepath (str): Path to the PDF file.
+
+    Returns:
+        str: Extracted text content from all pages.
+    """
+
     text = ""
     with pdfplumber.open(filepath) as pdf:
         for page in pdf.pages:
@@ -307,6 +327,15 @@ def read_pdf(filepath):
 
 
 def read_csv(filepath):
+    """
+    Read a CSV file and convert its contents into a string with rows joined by newlines.
+
+    Args:
+        filepath (str): Path to the CSV file.
+
+    Returns:
+        str: CSV contents as a string, rows separated by newlines and columns by commas.
+    """
     with open(filepath, newline="", encoding="utf-8") as csvfile:
         reader = csv.reader(csvfile)
         return "\n".join([", ".join(row) for row in reader])
@@ -322,13 +351,19 @@ handlers = {
 
 def chunk_text(text, max_tokens=3000):
     """
-    Yields text chunks that fit within the max_tokens limit.
+    Yield successive chunks of text, each fitting within a maximum token count.
 
     Args:
         text (str): The full text to split.
-        max_tokens (int): Maximum tokens per chunk (adjust to model's limit minus response).
-        model_name (str): Model used to select tokenizer (not currently used here).
+        max_tokens (int): Maximum number of tokens per chunk.
+
+    Yields:
+        str: Text chunks that do not exceed the max_tokens limit.
+
+    Notes:
+        Uses the 'cl100k_base' tokenizer from tiktoken to count tokens.
     """
+
     enc = tiktoken.get_encoding("cl100k_base")
     words = text.split()
     current_chunk = []

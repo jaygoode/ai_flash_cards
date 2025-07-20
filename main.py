@@ -27,5 +27,5 @@ if __name__ == "__main__":
     anki_api_handler.add_cards(options["deck_name"], cards)
 
     print(
-        f"card creation done! deck name: {options["deck_name"]}, topic: {options["topic"]}, cards created: {len(cards)}"
+        f'''card creation done! deck name: {options["deck_name"]}, topic: {options["topic"]}, cards created: {len(cards)}'''
     )
