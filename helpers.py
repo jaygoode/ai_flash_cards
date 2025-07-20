@@ -80,14 +80,14 @@ def generate_cards(options, config, prompts, chunk):
         The function uses exponential retry logic from the `retry` decorator to handle transient failures
         in AI prompt processing or file handling.
     """
-    
+
     filled_prompt = (
         prompts["generate_flashcards"]
         .replace("{{topic}}", options["topic"])
         .replace("{{text}}", chunk)
         .replace("{{card_amount}}", options["card_amount"])
     )
-    print(f"topic:{options["topic"]}, card amount: {options["card_amount"]}")
+    print(f'''topic:{options["topic"]}, card amount: {options["card_amount"]}''')
     cards_to_add_response = ai_handler.prompt_ai(filled_prompt, model=config["model"])
     raw_json_str = file_handler.extract_json(
         cards_to_add_response
