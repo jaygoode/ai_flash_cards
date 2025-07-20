@@ -8,6 +8,7 @@ import pdfplumber
 import psutil
 import tiktoken
 import yaml
+from typing import List, Dict
 
 
 def format_and_split_cards(cards_json):
@@ -67,7 +68,7 @@ def create_json_file(filename: str) -> None:
     print(f"JSON successfully saved to '{filename}'")
 
 
-def append_to_json_file(cards_dicts: list[dict], topic: str, deck_name: str) -> None:
+def append_to_json_file(cards_dicts: List[Dict], topic: str, deck_name: str) -> None:
     """
     Append a list of card dictionaries to a JSON file named using topic and deck name.
 
@@ -146,7 +147,7 @@ def clean_malformed_json(json_str):
 
     # Escape unescaped inner quotes (e.g. inside values)
     def escape_inner_quotes(match):
-        return f'"{match.group(1).replace('"', '\\"')}"'
+        return f'''"{match.group(1).replace('"', '\\"')}"'''
 
     # This ensures all string values are properly quoted and escaped
     json_str = re.sub(r'"([^"]*?[^\\])"', escape_inner_quotes, json_str)

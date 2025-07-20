@@ -1,0 +1,10 @@
+Metadata-Version: 2.4
+Name: ai-flash-cards
+Version: 0.1.0
+Summary: Add your description here
+Requires-Python: >=3.13
+Description-Content-Type: text/markdown
+
+# ai_flash_cards
+
+flash card api tool with the new ai protocol MCP

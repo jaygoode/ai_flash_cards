@@ -1,0 +1,6 @@
+README.md
+pyproject.toml
+ai_flash_cards.egg-info/PKG-INFO
+ai_flash_cards.egg-info/SOURCES.txt
+ai_flash_cards.egg-info/dependency_links.txt
+ai_flash_cards.egg-info/top_level.txt
