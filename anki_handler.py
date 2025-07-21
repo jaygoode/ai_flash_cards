@@ -10,16 +10,15 @@ ANKI_CONNECT_URL = "http://localhost:8765"
 def get_latest_anki_url() -> str:
     url = "https://api.github.com/repos/ankitects/anki/releases/latest"
     resp = requests.get(url)
-    breakpoint()
     resp.raise_for_status()
     release = resp.json()
     
     # Determine OS-specific filename pattern
     system = platform.system()
     pattern = {
-        "Windows": r"anki-.*-windows.*\.exe$",
-        "Linux":   r"anki-.*-linux.*\.tar\.bz2$",
-        "Darwin":  r"anki-.*-mac.*\.dmg$",
+        "Windows": r"anki-launcher-.*-windows\.exe$",
+        "Linux":   r"anki-launcher-.*-linux\.tar\.zst$",
+        "Darwin":  r"anki-launcher-.*-mac\.dmg$",
     }.get(system)
     if not pattern:
         raise RuntimeError(f"No download pattern for OS: {system}")
@@ -33,6 +32,7 @@ def get_latest_anki_url() -> str:
 
 def download_anki(dest_folder: str) -> str:
     url = get_latest_anki_url()
+    breakpoint()
     filename = os.path.basename(url)
     path = os.path.join(dest_folder, filename)
     print(f"Downloading {filename} from {url}...")

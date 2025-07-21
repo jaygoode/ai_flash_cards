@@ -1,7 +1,6 @@
 import os
 import subprocess
-
-import ai_flash_cards.anki_handler as anki_handler
+import anki_handler
 import file_handler
 import helpers
 from typing import Dict
@@ -12,7 +11,8 @@ if __name__ == "__main__":
     config = file_handler.read_yaml_file("config.yaml")
     prompts = file_handler.read_yaml_file(config["filepaths"][os_name]["prompts_fp"])
 
-    if not os.path.exists(config["filepaths"][os_name]["anki_path"]):
+    if not os.path.exists(config["filepaths"][os_name]["anki_exe_path"]):
+        breakpoint()
         anki_handler.download_anki(dest_folder=config["filepaths"][os_name]["anki_path"])
 
     if not file_handler.is_anki_running():
