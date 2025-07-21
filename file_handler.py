@@ -8,10 +8,10 @@ import pdfplumber
 import psutil
 import tiktoken
 import yaml
-from typing import List, Dict
+from typing import List, Dict, Any
 
 
-def format_and_split_cards(cards_json):
+def format_and_split_cards(cards_json:str) -> List[Dict[str, str]]:
     """
     Parse a JSON-like string containing multiple card objects, extract valid cards, and return them as dictionaries.
 
@@ -26,7 +26,7 @@ def format_and_split_cards(cards_json):
         - Attempts to clean malformed JSON-like strings before parsing.
     """
 
-    cards_as_dicts = []
+    cards_as_dicts: List[Dict[str, Any]] = []
     split_cards = re.findall(r"\{[^{}]*\}", cards_json)
     for card_str in split_cards:
         if not all(key in card_str for key in ["front", "back", "tags"]):
@@ -68,7 +68,7 @@ def create_json_file(filename: str) -> None:
     print(f"JSON successfully saved to '{filename}'")
 
 
-def append_to_json_file(cards_dicts: List[Dict], topic: str, deck_name: str) -> None:
+def append_to_json_file(cards_dicts: List[Dict[str, str]], topic: str, deck_name: str) -> str:
     """
     Append a list of card dictionaries to a JSON file named using topic and deck name.
 
@@ -88,7 +88,7 @@ def append_to_json_file(cards_dicts: List[Dict], topic: str, deck_name: str) -> 
 
     if not os.path.exists(filename):
         create_json_file(filename)
-        existing_data = []
+        existing_data: List[Dict[str, Any]] = []
     else:
         with open(filename, "r", encoding="utf-8") as f:
             existing_data = json.load(f)
