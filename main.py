@@ -1,7 +1,7 @@
 import os
 import subprocess
 
-import anki_api_handler
+import ai_flash_cards.anki_handler as anki_handler
 import file_handler
 import helpers
 from typing import Dict
@@ -10,10 +10,10 @@ import platform
 if __name__ == "__main__":
     os_name = platform.system().lower()
     config = file_handler.read_yaml_file("config.yaml")
-    prompts = file_handler.read_yaml_file(config["filepaths"]["prompts_fp"])
+    prompts = file_handler.read_yaml_file(config["filepaths"][os_name]["prompts_fp"])
 
     if not os.path.exists(config["filepaths"][os_name]["anki_path"]):
-        pass
+        anki_handler.download_anki(dest_folder=config["filepaths"][os_name]["anki_path"])
 
     if not file_handler.is_anki_running():
         subprocess.Popen([config["filepaths"][os_name]["anki_path"]])
@@ -33,14 +33,14 @@ if __name__ == "__main__":
             exit(1)
         print(f"Cards found: {len(cards)}")
         print(f"Adding cards to deck: {config['options']['readymade_deck_name']}")
-        anki_api_handler.add_cards(config['options']["readymade_deck_name"], cards)
+        anki_handler.add_cards(config['options']["readymade_deck_name"], cards)
     else:    
         options: Dict[str, str] = helpers.get_settings(config["options"]["use_inputs"], config)
         filename:str = ""
         for chunk in file_handler.chunk_text(options["topic"]):
             filename = helpers.generate_cards(options, config, prompts, chunk)
         cards = file_handler.read_json_file(filename)
-        anki_api_handler.add_cards(options["deck_name"], cards)
+        anki_handler.add_cards(options["deck_name"], cards)
 
         print(
             f'''card creation done! deck name: {options["deck_name"]}, topic: {options["topic"]}, cards created: {len(cards)}'''

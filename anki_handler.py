@@ -1,8 +1,47 @@
 
 import requests
+import platform
+import re
+import os
+from typing import Dict, Any
 
 ANKI_CONNECT_URL = "http://localhost:8765"
-from typing import Dict, Any
+
+def get_latest_anki_url() -> str:
+    url = "https://api.github.com/repos/ankitects/anki/releases/latest"
+    resp = requests.get(url)
+    breakpoint()
+    resp.raise_for_status()
+    release = resp.json()
+    
+    # Determine OS-specific filename pattern
+    system = platform.system()
+    pattern = {
+        "Windows": r"anki-.*-windows.*\.exe$",
+        "Linux":   r"anki-.*-linux.*\.tar\.bz2$",
+        "Darwin":  r"anki-.*-mac.*\.dmg$",
+    }.get(system)
+    if not pattern:
+        raise RuntimeError(f"No download pattern for OS: {system}")
+
+    # Look for the matching download URL
+    for asset in release["assets"]:
+        name = asset.get("name", "")
+        if re.search(pattern, name):
+            return asset["browser_download_url"]
+    raise RuntimeError("No matching Anki asset found")
+
+def download_anki(dest_folder: str) -> str:
+    url = get_latest_anki_url()
+    filename = os.path.basename(url)
+    path = os.path.join(dest_folder, filename)
+    print(f"Downloading {filename} from {url}...")
+    with requests.get(url, stream=True) as r:
+        r.raise_for_status()
+        with open(path, "wb") as f:
+            for chunk in r.iter_content(chunk_size=8192):
+                f.write(chunk)
+    return path
 
 def invoke(action: str, params: Dict[str, Any] = {}) -> Dict[str, Any]:
     try:
