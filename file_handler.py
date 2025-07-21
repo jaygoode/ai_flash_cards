@@ -5,10 +5,10 @@ import re
 
 import docx
 import pdfplumber
-import psutil
+from psutil import process_iter, Process, NoSuchProcess, AccessDenied
 import tiktoken
 import yaml
-from typing import List, Dict, Any
+from typing import List, Dict, Any, cast, Generator, Iterator
 
 
 def format_and_split_cards(cards_json:str) -> List[Dict[str, str]]:
@@ -26,7 +26,7 @@ def format_and_split_cards(cards_json:str) -> List[Dict[str, str]]:
         - Attempts to clean malformed JSON-like strings before parsing.
     """
 
-    cards_as_dicts: List[Dict[str, Any]] = []
+    cards_as_dicts: List[Dict[str, str]] = []
     split_cards = re.findall(r"\{[^{}]*\}", cards_json)
     for card_str in split_cards:
         if not all(key in card_str for key in ["front", "back", "tags"]):
@@ -85,17 +85,15 @@ def append_to_json_file(cards_dicts: List[Dict[str, str]], topic: str, deck_name
     """
 
     filename = f"./decks/{topic}_{deck_name}.json"
-
     if not os.path.exists(filename):
         create_json_file(filename)
-        existing_data: List[Dict[str, Any]] = []
+        existing_data: List[Dict[str, str]] = []
     else:
         with open(filename, "r", encoding="utf-8") as f:
-            existing_data = json.load(f)
-            if not isinstance(existing_data, list):
+            data = json.load(f)
+            if not isinstance(data, list):
                 raise ValueError("Existing file is not a list.")
-
-    existing_data.extend(cards_dicts)
+            existing_data = cast(List[Dict[str, str]], data)
 
     with open(filename, "w", encoding="utf-8") as f:
         json.dump(existing_data, f, indent=2, ensure_ascii=False)
@@ -104,7 +102,7 @@ def append_to_json_file(cards_dicts: List[Dict[str, str]], topic: str, deck_name
     return filename
 
 
-def extract_json(str):
+def extract_json(str:str):
     """
     Extract the first JSON array found within a string.
 
@@ -126,7 +124,7 @@ def extract_json(str):
         raise Exception
 
 
-def clean_malformed_json(json_str):
+def clean_malformed_json(json_str:str):
     """
     Clean a malformed JSON string by fixing common issues like backslashes, smart quotes, trailing commas, and ellipses.
 
@@ -158,7 +156,7 @@ def clean_malformed_json(json_str):
     return json_str
 
 
-def text_to_dict(text):
+def text_to_dict(text:str) -> List[Dict[str, str]]:
     """
     Convert specially formatted plaintext flashcards into a list of card dictionaries.
 
@@ -169,7 +167,7 @@ def text_to_dict(text):
         list of dict: List of card dictionaries with keys 'front', 'back', and 'tags'.
     """
 
-    cards = []
+    cards:List[Dict[str, str]] = []
     for block in text.strip().split("\n\n"):
         lines = block.strip().splitlines()
         card = {
@@ -181,7 +179,7 @@ def text_to_dict(text):
     return cards
 
 
-def read_json_file(filepath: str) -> dict:
+def read_json_file(filepath: str) -> Any:
     """
     Read and parse a JSON file.
 
@@ -197,7 +195,7 @@ def read_json_file(filepath: str) -> dict:
     return data
 
 
-def read_yaml_file(filepath: str) -> dict:
+def read_yaml_file(filepath: str) -> Any:
     """
     Read and parse a YAML file.
 
@@ -213,7 +211,7 @@ def read_yaml_file(filepath: str) -> dict:
     return data
 
 
-def write_to_yaml_file(data: dict, filepath: str) -> None:
+def write_to_yaml_file(data: List[Dict[str, str]], filepath: str) -> None:
     """
     Write or update a YAML file with the provided dictionary data.
 
@@ -239,7 +237,7 @@ def write_to_yaml_file(data: dict, filepath: str) -> None:
         yaml.dump(existing_data, f)
 
 
-def is_anki_running():
+def is_anki_running()-> bool:
     """
     Check if the Anki application is currently running.
 
@@ -247,16 +245,16 @@ def is_anki_running():
         bool: True if an Anki process is found, False otherwise.
     """
 
-    for proc in psutil.process_iter(attrs=["name", "exe", "cmdline"]):
+    for proc in process_iter(attrs=["name", "exe", "cmdline"]):
         try:
             if "anki" in proc.info["name"].lower():
                 return True
-        except (psutil.NoSuchProcess, psutil.AccessDenied):
+        except (NoSuchProcess, AccessDenied):
             continue
     return False
 
 
-def read_file(filepath):
+def read_file(filepath:str):
     """
     Read a file based on its extension using appropriate handler functions.
 
@@ -279,7 +277,7 @@ def read_file(filepath):
         print(f"Filetype '{filetype}' is not supported. Please use another filetype.")
 
 
-def read_txt(filepath):
+def read_txt(filepath:str):
     """
     Read a plain text (.txt) file.
 
@@ -294,7 +292,7 @@ def read_txt(filepath):
         return file.read()
 
 
-def read_docx(filepath):
+def read_docx(filepath:str) -> str:
     """
     Read the text content from a Microsoft Word (.docx) file.
 
@@ -309,7 +307,7 @@ def read_docx(filepath):
     return "\n".join([para.text for para in doc.paragraphs])
 
 
-def read_pdf(filepath):
+def read_pdf(filepath:str):
     """
     Extract text content from a PDF file.
 
@@ -327,7 +325,7 @@ def read_pdf(filepath):
     return text
 
 
-def read_csv(filepath):
+def read_csv(filepath:str):
     """
     Read a CSV file and convert its contents into a string with rows joined by newlines.
 
@@ -342,7 +340,7 @@ def read_csv(filepath):
         return "\n".join([", ".join(row) for row in reader])
 
 
-handlers = {
+handlers:dict[str, Any] = {
     "txt": read_txt,
     "docx": read_docx,
     "pdf": read_pdf,
@@ -350,7 +348,7 @@ handlers = {
 }
 
 
-def chunk_text(text, max_tokens=3000):
+def chunk_text(text:str, max_tokens:int=3000)-> Generator[Any, Any, Any]:
     """
     Yield successive chunks of text, each fitting within a maximum token count.
 
