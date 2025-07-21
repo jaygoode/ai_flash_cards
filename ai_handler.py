@@ -1,19 +1,20 @@
 import ollama
-
+from ollama import ChatResponse 
 
 def prompt_ai(
-    prompt,
-    model="llama2",
-    system_prompt="you are a senior level professional related to the questioned asked of you.",
-):
+    prompt: str,
+    model: str = "llama2",
+    system_prompt: str = "you are a senior level professional related to the questioned asked of you.",
+) -> str:
     try:
-        response = ollama.chat(
+        response: ChatResponse = ollama.chat(
             model=model,
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": prompt},
             ],
-        )
+            stream=False
+        )  # type: ignore
     except Exception as err:
         if "try pulling" in str(err).lower():
             print(f"[!] Model '{model}' not found. Pulling it now...")
@@ -24,11 +25,13 @@ def prompt_ai(
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": prompt},
                 ],
-            )
+                stream=False
+            )  # type: ignore
         else:
-            raise Exception
-    return response["message"]["content"]
+            raise  # re-raise original exception with context
 
+    # Extract and return the actual content string from the response
+    return response["message"]["content"]
 
 # with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
 #     results = list(executor.map(ask_model, prompts))

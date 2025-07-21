@@ -5,10 +5,11 @@ import re
 
 import docx
 import pdfplumber
-from psutil import process_iter, Process, NoSuchProcess, AccessDenied
+from psutil import process_iter, NoSuchProcess, AccessDenied, Process
 import tiktoken
 import yaml
 from typing import List, Dict, Any, cast, Generator, Iterator
+
 
 
 def format_and_split_cards(cards_json:str) -> List[Dict[str, str]]:
@@ -144,7 +145,7 @@ def clean_malformed_json(json_str:str):
     json_str = json_str.replace("“", '"').replace("”", '"')
 
     # Escape unescaped inner quotes (e.g. inside values)
-    def escape_inner_quotes(match):
+    def escape_inner_quotes(match: re.Match[str]) -> str:
         return f'''"{match.group(1).replace('"', '\\"')}"'''
 
     # This ensures all string values are properly quoted and escaped
@@ -227,11 +228,11 @@ def write_to_yaml_file(data: List[Dict[str, str]], filepath: str) -> None:
     """
     if os.path.exists(filepath):
         with open(filepath, "r") as f:
-            existing_data = yaml.safe_load(f) or {}
+            existing_data: List[Dict[str, str]] = yaml.safe_load(f) or []
     else:
-        existing_data = {}
+        existing_data = []
 
-    existing_data.update(data)
+    existing_data.extend(data)
 
     with open(filepath, "w") as f:
         yaml.dump(existing_data, f)
@@ -244,8 +245,10 @@ def is_anki_running()-> bool:
     Returns:
         bool: True if an Anki process is found, False otherwise.
     """
+    def get_all_processes() -> Iterator[Process]:
+        return process_iter()
 
-    for proc in process_iter(attrs=["name", "exe", "cmdline"]):
+    for proc in get_all_processes():
         try:
             if "anki" in proc.info["name"].lower():
                 return True
@@ -254,7 +257,7 @@ def is_anki_running()-> bool:
     return False
 
 
-def read_file(filepath:str):
+def read_file(filepath:str) -> str | None:
     """
     Read a file based on its extension using appropriate handler functions.
 
@@ -275,6 +278,7 @@ def read_file(filepath:str):
         return handler(filepath)
     else:
         print(f"Filetype '{filetype}' is not supported. Please use another filetype.")
+        return None
 
 
 def read_txt(filepath:str):

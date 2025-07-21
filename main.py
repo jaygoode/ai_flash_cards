@@ -4,6 +4,7 @@ import subprocess
 import anki_api_handler
 import file_handler
 import helpers
+from typing import Dict
 
 if __name__ == "__main__":
     config = file_handler.read_yaml_file("config.yaml")
@@ -19,8 +20,8 @@ if __name__ == "__main__":
         print("Opening Anki failed. Might already be running.")
 
     use_inputs = False
-    options = helpers.get_settings(use_inputs, config, file_handler=file_handler)
-
+    options: Dict[str, str] = helpers.get_settings(use_inputs, config)
+    filename:str = ""
     for chunk in file_handler.chunk_text(options["topic"]):
         filename = helpers.generate_cards(options, config, prompts, chunk)
     cards = file_handler.read_json_file(filename)

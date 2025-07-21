@@ -14,7 +14,9 @@ simple_reply_format: False
 
 options:
   topic: "deck for learning finnish words, from english to finnish"
-  use_file: "y"
-  deck_name: "finnish1"
+  use_topic_file: "n"
+  use_readymade_deck: "y"
+  readymade_deck_name: "finnish_erikoisjoukkue_1"
+  deck_name: "finnish_erikoisjoukkue_1"
   card_amount: "5"
   text: "None"

@@ -2,9 +2,10 @@ from tenacity import retry, stop_after_attempt, wait_fixed
 
 import ai_handler
 import file_handler
+from typing import Dict, Any
 
 
-def get_settings(use_inputs, config, file_handler):
+def get_settings(use_inputs: bool, config: dict[str, Any]) -> dict[str, str]:
     """
     Gather configuration options either from user input or a provided config file.
 
@@ -21,7 +22,7 @@ def get_settings(use_inputs, config, file_handler):
             - card_amount (str): Number of cards to generate.
             - text (str): Text description or content to base the cards on.
     """
-    options = {}
+    options: Dict[str, str] = {}
     if use_inputs:
         options["topic"] = input("deck topic(s): ")
         options["use_file"] = input("use file to base cards on? (Y/N): ")
@@ -45,13 +46,17 @@ def get_settings(use_inputs, config, file_handler):
             filepath = config["filepaths"]["text_file"]
 
         options["text"] = "create cards based on this text: \n"
-        options["text"] += file_handler.read_file(filepath)
+        text = file_handler.read_file(filepath)
+        if text is None:
+            options["text"] += "No text found."
+        else:
+            options["text"] += text
 
     return options
 
 
 @retry(stop=stop_after_attempt(5), wait=wait_fixed(2))
-def generate_cards(options, config, prompts, chunk):
+def generate_cards(options: dict[str, str], config: dict[str, Any], prompts: dict[str, str], chunk: str) -> str:
     """
     Generate flashcards based on a given topic and text chunk using AI prompts.
 
