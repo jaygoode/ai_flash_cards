@@ -10,9 +10,7 @@ import tiktoken
 import yaml
 from typing import List, Dict, Any, cast, Generator, Iterator
 
-
-
-def format_and_split_cards(cards_json:str) -> List[Dict[str, str]]:
+def format_and_split_cards(cards_json: str) -> List[Dict[str, str]]:
     """
     Parse a JSON-like string containing multiple card objects, extract valid cards, and return them as dictionaries.
 

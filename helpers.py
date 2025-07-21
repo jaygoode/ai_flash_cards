@@ -25,7 +25,7 @@ def get_settings(use_inputs: bool, config: dict[str, Any]) -> dict[str, str]:
     options: Dict[str, str] = {}
     if use_inputs:
         options["topic"] = input("deck topic(s): ")
-        options["use_file"] = input("use file to base cards on? (Y/N): ")
+        options["use_topic_file"] = input("use topic file to base cards on? (Y/N): ")
         options["deck_name"] = input("deck name: ")
         options["card_amount"] = str(input("amount of cards to generate: "))
         options["text"] = input(
