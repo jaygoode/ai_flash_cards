@@ -5,16 +5,18 @@ import anki_api_handler
 import file_handler
 import helpers
 from typing import Dict
+import platform 
 
 if __name__ == "__main__":
+    os_name = platform.system().lower()
     config = file_handler.read_yaml_file("config.yaml")
     prompts = file_handler.read_yaml_file(config["filepaths"]["prompts_fp"])
 
     if (
-        os.path.exists(config["filepaths"]["anki_path"])
+        os.path.exists(config["filepaths"][os_name]["anki_path"])
         and not file_handler.is_anki_running()
     ):
-        subprocess.Popen([config["filepaths"]["anki_path"]])
+        subprocess.Popen([config["filepaths"][os_name]["anki_path"]])
         print("Anki launched!")
     else:
         print("Opening Anki failed. Might already be running.")
@@ -24,7 +26,7 @@ if __name__ == "__main__":
             f"Using readymade deck: {config['options']['readymade_deck_name']}. No new cards will be created."
         )
         cards = file_handler.read_json_file(
-            config["filepaths"]["readymade_deck_fp"]
+            config["filepaths"][os_name]["decks_path"] + config["options"]["readymade_deck_name"] + ".json"
         )
         if not cards:
             print("No cards found in the readymade deck file.")

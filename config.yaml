@@ -1,10 +1,14 @@
 filepaths:
-  task_plan_json_fp: "./task_plan.json"
-  prompts_fp: "./prompts.yaml"
-  memory_fp: "./memory.yaml"
-  anki_path: "C:\\Users\\johnn\\AppData\\Local\\Programs\\Anki\\anki.exe"
-  files_path: "C:\\repos\\ai_flash_cards\\files"
-  text_file: "C:\\repos\\ai_flash_cards\\files\\JÄÄKÄRIJOUKKUEEN+JA+RYHMÄN+KÄSIK_2018_s106_Ryhmän_ryhmittäminen_puolustukseen.pdf"
+  windows:
+    task_plan_json_fp: "./task_plan.json"
+    prompts_fp: "./prompts.yaml"
+    memory_fp: "./memory.yaml"
+    anki_path: "C:\\Users\\johnn\\AppData\\Local\\Programs\\Anki\\anki.exe"
+  linux:
+    anki_path: "/usr/bin/anki"
+    files_path: "/home/johnny/repos/ai_flash_cards/files"
+    decks_path: "./decks/"
+    text_file: "/home/johnny/repos/ai_flash_cards/files/JÄÄKÄRIJOUKKUEEN+JA+RYHMÄN+KÄSIK_2018_s106_Ryhmän_ryhmittäminen_puolustukseen.pdf"
 
 model: "deepseek-r1"
 # model: "mistral"
@@ -13,11 +17,11 @@ model: "deepseek-r1"
 simple_reply_format: False
 
 options:
+  use_readymade_deck: "y"
+  readymade_deck_name: "erikoisjoukkue_finnish"
+  deck_name: "erikoisjoukkue_finnish"
   topic: "deck for learning finnish words, from english to finnish"
   use_topic_file: "n"
   use_inputs: "n"
-  use_readymade_deck: "y"
-  readymade_deck_name: "finnish_erikoisjoukkue_1"
-  deck_name: "finnish_erikoisjoukkue_1"
   card_amount: "5"
   text: "None"
