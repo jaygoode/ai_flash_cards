@@ -1,14 +1,20 @@
 filepaths:
   windows:
-    task_plan_json_fp: "./task_plan.json"
+    prompts_fp: ".\\prompts.yaml"
+    memory_fp: ".\\memory.yaml"
+    installer_path: ".\\anki_installer.exe"
+    anki_path: ".\\anki\\anki.exe"
+    files_path: ".\\files"
+    decks_path: ".\\decks"
+    text_file: ".\\files\\JÄÄKÄRIJOUKKUEEN+JA+RYHMÄN+KÄSIK_2018_s106_Ryhmän_ryhmittäminen_puolustukseen.pdf"
+  linux:
     prompts_fp: "./prompts.yaml"
     memory_fp: "./memory.yaml"
-    anki_path: "C:\\Users\\johnn\\AppData\\Local\\Programs\\Anki\\anki.exe"
-  linux:
-    anki_path: "/usr/bin/anki"
-    files_path: "/home/johnny/repos/ai_flash_cards/files"
-    decks_path: "./decks/"
-    text_file: "/home/johnny/repos/ai_flash_cards/files/JÄÄKÄRIJOUKKUEEN+JA+RYHMÄN+KÄSIK_2018_s106_Ryhmän_ryhmittäminen_puolustukseen.pdf"
+    installer_path: "anki_installer.exe"
+    anki_path: "./anki/anki"
+    files_path: "./files"
+    decks_path: "./decks"
+    text_file: "./files/JÄÄKÄRIJOUKKUEEN+JA+RYHMÄN+KÄSIK_2018_s106_Ryhmän_ryhmittäminen_puolustukseen.pdf"
 
 model: "deepseek-r1"
 # model: "mistral"

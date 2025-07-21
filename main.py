@@ -12,10 +12,10 @@ if __name__ == "__main__":
     config = file_handler.read_yaml_file("config.yaml")
     prompts = file_handler.read_yaml_file(config["filepaths"]["prompts_fp"])
 
-    if (
-        os.path.exists(config["filepaths"][os_name]["anki_path"])
-        and not file_handler.is_anki_running()
-    ):
+    if not os.path.exists(config["filepaths"][os_name]["anki_path"]):
+        pass
+
+    if not file_handler.is_anki_running():
         subprocess.Popen([config["filepaths"][os_name]["anki_path"]])
         print("Anki launched!")
     else:
