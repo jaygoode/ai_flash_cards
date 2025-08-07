@@ -1,12 +1,43 @@
 import ollama
 from ollama import ChatResponse 
+from pydantic import BaseModel, Field
+from langchain.chat_models import ChatOllama
+from langchain.prompts.chat import ChatPromptTemplate, HumanMessagePromptTemplate
+from langchain.output_parsers import PydanticOutputParser
+
+class Card(BaseModel):
+    question: str = Field(..., description="The question to be asked on the flashcard.")
+    answer: str = Field(..., description="The answer to the question on the flashcard.")
+    tags: list[str] = Field(default_factory=list, description="Tags associated with the flashcard for categorization.")
+    deck_name: str = Field(..., description="The name of the Anki deck to which this card belongs.")
+    model: str = Field(default="llama2", description="The AI model used to generate the card content.")
+    # system_prompt: str = Field(
+    #     default="You are a senior level professional related to the question asked of you.",
+    #     description="System prompt for the AI model."
+    # )
 
 def prompt_ai(
     prompt: str,
     model: str = "llama2",
     system_prompt: str = "you are a senior level professional related to the questioned asked of you.",
 ) -> str:
+    parser = PydanticOutputParser(pydantic_object=Card)
+    message = HumanMessagePromptTemplate.from_template(template=prompt)
+    chat_prompt = ChatPromptTemplate.from_messages(messages=[message])
+    chat_prompt_with_values = chat_prompt.format_prompt(topic=prompt, format_instructions=parser.get_format_instructions())
+    llm = ChatOllama(model=model)
+    response = llm(chat_prompt_with_values.to_messages())
+    data = parser.parse(response.content)
+    print(data)
+    breakpoint()
+
+def prompt_ai_old(
+    prompt: str,
+    model: str = "llama2",
+    system_prompt: str = "you are a senior level professional related to the questioned asked of you.",
+) -> str:
     try:
+
         response: ChatResponse = ollama.chat(
             model=model,
             messages=[
