@@ -1,5 +1,6 @@
 files/*
 decks/*
+anki/*
 .env
 env
 .venv
@@ -7,3 +8,6 @@ __pycache__/
 __pycache__
 *.json
 .ruff_cache
+ai_fkash_card.egg-info/
+*.egg-info/
+*.egg
