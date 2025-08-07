@@ -12,11 +12,10 @@ if __name__ == "__main__":
     prompts = file_handler.read_yaml_file(config["filepaths"][os_name]["prompts_fp"])
 
     if not os.path.exists(config["filepaths"][os_name]["anki_exe_path"]):
-        breakpoint()
         anki_handler.download_anki(dest_folder=config["filepaths"][os_name]["anki_path"])
-
+    breakpoint()
     if not file_handler.is_anki_running():
-        subprocess.Popen([config["filepaths"][os_name]["anki_path"]])
+        subprocess.Popen([config["filepaths"][os_name]["anki_exe_path"]])
         print("Anki launched!")
     else:
         print("Opening Anki failed. Might already be running.")
@@ -25,6 +24,7 @@ if __name__ == "__main__":
         print(
             f"Using readymade deck: {config['options']['readymade_deck_name']}. No new cards will be created."
         )
+        breakpoint()
         cards = file_handler.read_json_file(
             config["filepaths"][os_name]["decks_path"] + config["options"]["readymade_deck_name"] + ".json"
         )

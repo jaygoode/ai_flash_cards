@@ -236,21 +236,32 @@ def write_to_yaml_file(data: List[Dict[str, str]], filepath: str) -> None:
         yaml.dump(existing_data, f)
 
 
-def is_anki_running()-> bool:
-    """
-    Check if the Anki application is currently running.
+# def is_anki_running()-> bool:
+#     """
+#     Check if the Anki application is currently running.
 
-    Returns:
-        bool: True if an Anki process is found, False otherwise.
-    """
-    def get_all_processes() -> Iterator[Process]:
-        return process_iter()
+#     Returns:
+#         bool: True if an Anki process is found, False otherwise.
+#     """
+#     def get_all_processes() -> Iterator[Process]:
+#         return process_iter()
 
-    for proc in get_all_processes():
+#     for proc in get_all_processes():
+#         try:
+#             if "anki" in proc.info["name"].lower():
+#                 return True
+#         except (NoSuchProcess, AccessDenied):
+#             continue
+#     return False
+
+import psutil
+
+def is_anki_running():
+    for proc in psutil.process_iter(attrs=["name"]):
         try:
             if "anki" in proc.info["name"].lower():
                 return True
-        except (NoSuchProcess, AccessDenied):
+        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
             continue
     return False
 

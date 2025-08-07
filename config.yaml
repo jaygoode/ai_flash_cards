@@ -13,9 +13,9 @@ filepaths:
     memory_fp: "./memory.yaml"
     installer_path: "anki_installer.exe"
     anki_path: "./anki/"
-    anki_exe_path: "./anki/anki"
+    anki_exe_path: "./anki/anki-launcher-25.07.5-linux/anki"
     files_path: "./files"
-    decks_path: "./decks"
+    decks_path: "./decks/"
     text_file: "./files/JÄÄKÄRIJOUKKUEEN+JA+RYHMÄN+KÄSIK_2018_s106_Ryhmän_ryhmittäminen_puolustukseen.pdf"
 
 model: "deepseek-r1"
@@ -26,8 +26,8 @@ simple_reply_format: False
 
 options:
   use_readymade_deck: "y"
-  readymade_deck_name: "erikoisjoukkue_finnish"
-  deck_name: "erikoisjoukkue_finnish"
+  readymade_deck_name: "deck for learning finnish grammar_finnish"
+  deck_name: "deck for learning finnish grammar_finnish"
   topic: "deck for learning finnish words, from english to finnish"
   use_topic_file: "n"
   use_inputs: "n"
