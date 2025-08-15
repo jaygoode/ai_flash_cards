@@ -11,7 +11,6 @@ def create_from_deck_json(config, os_name):
     print(
         f"Using readymade deck: {config['options']['readymade_deck_name']}. No new cards will be created."
     )
-    breakpoint()
     cards = file_handler.read_json_file(
         config["filepaths"][os_name]["decks_path"] + config["options"]["readymade_deck_name"] + ".json"
     )

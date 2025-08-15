@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field
 from langchain.chat_models import ChatOllama
 from langchain.prompts.chat import ChatPromptTemplate, HumanMessagePromptTemplate
 from langchain.output_parsers import PydanticOutputParser
+from enums import AIProvider
 
 class Card(BaseModel):
     question: str = Field(..., description="The question to be asked on the flashcard.")
@@ -18,12 +19,35 @@ class Card(BaseModel):
     #     description="System prompt for the AI model."
     # )
 
-def prompt_ai(ai, 
+def prompt_ai(
+    ai_provider: AIProvider, 
     prompt: str,
     model: str = "llama2",
     system_prompt: str = "you are a senior level professional related to the questioned asked of you.",
 ) -> str:
-<<<<<<< HEAD
+    api_key = os.getenv("OPENAI_API_KEY")
+
+    ai_providers = {
+        AIProvider.OPENAI: call_openai,
+        AIProvider.OLLAMA: call_ollama,
+    }
+
+    func = ai_providers.get(ai_provider)
+    if not func:
+        raise ValueError(f"Unknown AI provider: {ai_provider}")
+
+    # Call function with correct arguments
+    if ai_provider == AIProvider.OPENAI:
+        return func(model=model, api_key=api_key, prompt=prompt, system_prompt=system_prompt)
+    else:
+        return func(model=model, prompt=prompt, system_prompt=system_prompt)
+
+
+def call_ollama( 
+    prompt: str,
+    model: str = "llama2",
+    system_prompt: str = "you are a senior level professional related to the questioned asked of you.",
+) -> str:
     parser = PydanticOutputParser(pydantic_object=Card)
     message = HumanMessagePromptTemplate.from_template(template=prompt)
     chat_prompt = ChatPromptTemplate.from_messages(messages=[message])
@@ -34,52 +58,6 @@ def prompt_ai(ai,
     print(data)
     breakpoint()
 
-def prompt_ai_old(
-=======
-    # Example usage
-    api_key = os.getenv("OPENAI_API_KEY")  # or load from secure storage
-    if ai == "openai":
-        return call_openai(model, api_key, prompt)
-    elif ai == "ollama":
-        return call_ollama(model, prompt)
-
-
-def call_ollama( 
->>>>>>> main
-    prompt: str,
-    model: str = "llama2",
-    system_prompt: str = "you are a senior level professional related to the questioned asked of you.",
-) -> str:
-<<<<<<< HEAD
-=======
-    # Example usage
->>>>>>> main
-    try:
-
-        response: ChatResponse = ollama.chat(
-            model=model,
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": prompt},
-            ],
-            stream=False
-        )  # type: ignore
-    except Exception as err:
-        if "try pulling" in str(err).lower():
-            print(f"[!] Model '{model}' not found. Pulling it now...")
-            ollama.pull(model)
-            response = ollama.chat(
-                model=model,
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": prompt},
-                ],
-                stream=False
-            )  # type: ignore
-        else:
-            raise  
-
-    return response["message"]["content"]
 
 def call_openai(model, api_key, prompt):
     url = "https://api.openai.com/v1/chat/completions"
@@ -94,7 +72,3 @@ def call_openai(model, api_key, prompt):
     response = requests.post(url, headers=headers, json=payload)
     response.raise_for_status()
     return response.json()["choices"][0]["message"]["content"]
-
-# Example usage
-api_key = os.getenv("OPENAI_API_KEY")  # or load from secure storage
-print(call_openai(model, api_key, "Explain spaced repetition in 2 sentences."))
