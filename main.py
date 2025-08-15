@@ -44,4 +44,4 @@ if __name__ == "__main__":
     if config["options"]["use_readymade_deck"].lower() in ["yes", "y"]:
         create_from_deck_json(config, os_name)
     else:    
-        create_from_deck_json(config, os_name)
+        create_deck_with_ai(config)
