@@ -1,9 +1,9 @@
 filepaths:
   windows:
+    anki_path: ".\\anki\\"
     prompts_fp: ".\\prompts.yaml"
     memory_fp: ".\\memory.yaml"
-    installer_path: ".\\anki_installer.exe"
-    anki_path: ".\\anki\\"
+    installer_name: "anki-launcher-*-windows.exe"
     anki_exe_path: ".\\anki\\anki.exe"
     files_path: ".\\files"
     decks_path: ".\\decks"
@@ -11,9 +11,10 @@ filepaths:
   linux:
     prompts_fp: "./prompts.yaml"
     memory_fp: "./memory.yaml"
-    installer_path: "anki_installer.exe"
+    installer_name: "anki_installer.exe"
     anki_path: "./anki/"
-    anki_exe_path: "./anki/anki-launcher-25.07.5-linux/anki"
+    anki_exe_path: "./anki/anki-launcher-*-linux.tar.zst/anki"
+    # anki_exe_path: "./anki/anki-launcher-25.07.5-linux/anki"
     files_path: "./files"
     decks_path: "./decks/"
     text_file: "./files/JÄÄKÄRIJOUKKUEEN+JA+RYHMÄN+KÄSIK_2018_s106_Ryhmän_ryhmittäminen_puolustukseen.pdf"

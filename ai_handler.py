@@ -1,3 +1,5 @@
+import requests
+import os
 import ollama
 from ollama import ChatResponse 
 from pydantic import BaseModel, Field
@@ -16,11 +18,12 @@ class Card(BaseModel):
     #     description="System prompt for the AI model."
     # )
 
-def prompt_ai(
+def prompt_ai(ai, 
     prompt: str,
     model: str = "llama2",
     system_prompt: str = "you are a senior level professional related to the questioned asked of you.",
 ) -> str:
+<<<<<<< HEAD
     parser = PydanticOutputParser(pydantic_object=Card)
     message = HumanMessagePromptTemplate.from_template(template=prompt)
     chat_prompt = ChatPromptTemplate.from_messages(messages=[message])
@@ -32,10 +35,25 @@ def prompt_ai(
     breakpoint()
 
 def prompt_ai_old(
+=======
+    # Example usage
+    api_key = os.getenv("OPENAI_API_KEY")  # or load from secure storage
+    if ai == "openai":
+        return call_openai(model, api_key, prompt)
+    elif ai == "ollama":
+        return call_ollama(model, prompt)
+
+
+def call_ollama( 
+>>>>>>> main
     prompt: str,
     model: str = "llama2",
     system_prompt: str = "you are a senior level professional related to the questioned asked of you.",
 ) -> str:
+<<<<<<< HEAD
+=======
+    # Example usage
+>>>>>>> main
     try:
 
         response: ChatResponse = ollama.chat(
@@ -59,32 +77,24 @@ def prompt_ai_old(
                 stream=False
             )  # type: ignore
         else:
-            raise  # re-raise original exception with context
+            raise  
 
-    # Extract and return the actual content string from the response
     return response["message"]["content"]
 
-# with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
-#     results = list(executor.map(ask_model, prompts))
+def call_openai(model, api_key, prompt):
+    url = "https://api.openai.com/v1/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "model": model,
+        "messages": [{"role": "user", "content": prompt}]
+    }
+    response = requests.post(url, headers=headers, json=payload)
+    response.raise_for_status()
+    return response.json()["choices"][0]["message"]["content"]
 
-# for result in results:
-#     print(result)
-
-
-# config = file_handler.read_yaml_file("config.yaml")
-
-
-# def prompt_ai(system_prompt, model="llama2"):
-#     print(f"[*] Sending request to Ollama {model} model...")
-
-#     result = subprocess.run(
-#         ["ollama", "run", model, system_prompt],
-#         capture_output=True,
-#         text=True,
-#         encoding="utf-8",
-#     )
-
-#     if result.returncode != 0:
-#         raise RuntimeError(f"Ollama error:\n{result.stderr}")
-
-#     return result.stdout.strip()
+# Example usage
+api_key = os.getenv("OPENAI_API_KEY")  # or load from secure storage
+print(call_openai(model, api_key, "Explain spaced repetition in 2 sentences."))
