@@ -6,7 +6,7 @@ filepaths:
     installer_name: "anki-launcher-*-windows.exe"
     anki_exe_path: ".\\anki\\anki.exe"
     files_path: ".\\files"
-    decks_path: ".\\decks"
+    decks_path: ".\\decks\\"
     text_file: ".\\files\\JÄÄKÄRIJOUKKUEEN+JA+RYHMÄN+KÄSIK_2018_s106_Ryhmän_ryhmittäminen_puolustukseen.pdf"
   linux:
     prompts_fp: "./prompts.yaml"
@@ -26,7 +26,7 @@ model: "deepseek-r1"
 simple_reply_format: False
 
 options:
-  use_readymade_deck: "y"
+  use_readymade_deck: "n"
   readymade_deck_name: "deck for learning finnish grammar_finnish"
   deck_name: "deck for learning finnish grammar_finnish"
   topic: "deck for learning finnish words, from english to finnish"

@@ -56,3 +56,5 @@ generate_flashcards1: |
   Tags: ...
 
   Do not explain your reasoning or include anything other than the flashcard content in this format.
+
+system_prompt: "you are a professional flashcard creator."

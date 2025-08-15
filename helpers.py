@@ -3,6 +3,7 @@ from tenacity import retry, stop_after_attempt, wait_fixed
 import ai_handler
 import file_handler
 from typing import Dict, Any
+from enums import AIProvider
 
 
 def get_settings(use_inputs: bool, config: dict[str, Any]) -> dict[str, str]:
@@ -93,7 +94,8 @@ def generate_cards(options: dict[str, str], config: dict[str, Any], prompts: dic
         .replace("{{card_amount}}", options["card_amount"])
     )
     print(f'''topic:{options["topic"]}, card amount: {options["card_amount"]}''')
-    cards_to_add_response = ai_handler.prompt_ai(filled_prompt, model=config["model"])
+    ai_provider = AIProvider.OPENAI
+    cards_to_add_response = ai_handler.prompt_ai(ai_provider, filled_prompt, model=config["model"], system_prompt=prompts["system_prompt"])
     raw_json_str = file_handler.extract_json(
         cards_to_add_response
     )  # extract the json part of LLM response

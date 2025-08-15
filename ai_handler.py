@@ -3,7 +3,7 @@ import os
 import ollama
 from ollama import ChatResponse 
 from pydantic import BaseModel, Field
-from langchain.chat_models import ChatOllama
+from langchain_community.chat_models import ChatOllama
 from langchain.prompts.chat import ChatPromptTemplate, HumanMessagePromptTemplate
 from langchain.output_parsers import PydanticOutputParser
 from enums import AIProvider
