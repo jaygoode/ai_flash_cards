@@ -30,9 +30,8 @@ def get_latest_anki_url() -> str:
             return asset["browser_download_url"]
     raise RuntimeError("No matching Anki asset found")
 
-def download_anki(dest_folder: str) -> str:
+def download_anki_installation_file(dest_folder: str) -> str:
     url = get_latest_anki_url()
-    breakpoint()
     filename = os.path.basename(url)
     path = os.path.join(dest_folder, filename)
     print(f"Downloading {filename} from {url}...")

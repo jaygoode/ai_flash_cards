@@ -5,15 +5,18 @@ import file_handler
 import helpers
 from typing import Dict
 import platform 
+import glob 
 
 if __name__ == "__main__":
     os_name = platform.system().lower()
     config = file_handler.read_yaml_file("config.yaml")
     prompts = file_handler.read_yaml_file(config["filepaths"][os_name]["prompts_fp"])
+    # installation_folder = config["filepaths"][os_name]["anki_path"]
+    # installation_file = glob.glob(os.path.join(installation_folder, config["filepaths"][os_name]["installer_name"]))[0]
 
-    if not os.path.exists(config["filepaths"][os_name]["anki_exe_path"]):
-        anki_handler.download_anki(dest_folder=config["filepaths"][os_name]["anki_path"])
-    breakpoint()
+    # if not os.path.exists(config["filepaths"][os_name]["anki_exe_path"]):
+    #     anki_handler.download_anki_installation_file(dest_folder=config["filepaths"][os_name]["anki_path"])
+
     if not file_handler.is_anki_running():
         subprocess.Popen([config["filepaths"][os_name]["anki_exe_path"]])
         print("Anki launched!")
