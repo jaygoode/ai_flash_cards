@@ -34,21 +34,13 @@ def create_deck_with_ai(config):
         f'''card creation done! deck name: {options["deck_name"]}, topic: {options["topic"]}, cards created: {len(cards)}'''
     )
 
+
+
 if __name__ == "__main__":
     os_name = platform.system().lower()
     config = file_handler.read_yaml_file("config.yaml")
     prompts = file_handler.read_yaml_file(config["filepaths"][os_name]["prompts_fp"])
-    installation_folder = config["filepaths"][os_name]["anki_path"]
-    installation_file = glob.glob(os.path.join(installation_folder, config["filepaths"][os_name]["installer_name"]))[0]
-
-    if not os.path.exists(config["filepaths"][os_name]["anki_exe_path"]):
-        anki_handler.download_anki_installation_file(dest_folder=config["filepaths"][os_name]["anki_path"])
-
-    if not file_handler.is_anki_running():
-        subprocess.Popen([config["filepaths"][os_name]["anki_exe_path"]])
-        print("Anki launched!")
-    else:
-        print("Opening Anki failed. Might already be running.")
+    anki_handler.start_anki(os_name, config)
 
     if config["options"]["use_readymade_deck"].lower() in ["yes", "y"]:
         create_from_deck_json(config, os_name)

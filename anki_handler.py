@@ -4,8 +4,23 @@ import platform
 import re
 import os
 from typing import Dict, Any
+import glob
+import subprocess
+import file_handler
 
 ANKI_CONNECT_URL = "http://localhost:8765"
+
+def start_anki(os_name, config):
+    installation_folder = config["filepaths"][os_name]["anki_path"]
+    installation_file = glob.glob(os.path.join(installation_folder, config["filepaths"][os_name]["installer_name"]))[0]
+    if not os.path.exists(config["filepaths"][os_name]["anki_exe_path"]):
+        download_anki_installation_file(dest_folder=config["filepaths"][os_name]["anki_path"])
+
+    if not file_handler.is_anki_running():
+        subprocess.Popen([config["filepaths"][os_name]["anki_exe_path"]])
+        print("Anki launched!")
+    else:
+        print("Opening Anki failed. Might already be running.")
 
 def get_latest_anki_url() -> str:
     url = "https://api.github.com/repos/ankitects/anki/releases/latest"
