@@ -22,8 +22,9 @@ def create_from_deck_json(config, os_name):
     anki_handler.add_cards(config['options']["readymade_deck_name"], cards)
 
 def create_deck_with_ai(config):
-    options: Dict[str, str] = helpers.get_settings(config["options"]["use_inputs"], config)
+    options: Dict[str, str] = helpers.get_settings(config)
     filename:str = ""
+    breakpoint()
     for chunk in file_handler.chunk_text(options["topic"]):
         filename = helpers.generate_cards(options, config, prompts, chunk)
     cards = file_handler.read_json_file(filename)

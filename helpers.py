@@ -6,7 +6,7 @@ from typing import Dict, Any
 from enums import AIProvider
 
 
-def get_settings(use_inputs: bool, config: dict[str, Any]) -> dict[str, str]:
+def get_settings(config: dict[str, Any]) -> dict[str, str]:
     """
     Gather configuration options either from user input or a provided config file.
 
@@ -18,13 +18,13 @@ def get_settings(use_inputs: bool, config: dict[str, Any]) -> dict[str, str]:
     Returns:
         dict: A dictionary containing configuration options such as:
             - topic (str): The topic(s) for the flashcard deck.
-            - use_file (str): Whether to use a file for text content ("Y"/"N").
+            - use_topic_file (str): Whether to use a file for text content ("Y"/"N").
             - deck_name (str): Name of the deck to be created.
             - card_amount (str): Number of cards to generate.
             - text (str): Text description or content to base the cards on.
     """
     options: Dict[str, str] = {}
-    if use_inputs:
+    if config["options"]["use_inputs"].lower() in ["yes", "y"]:
         options["topic"] = input("deck topic(s): ")
         options["use_topic_file"] = input("use topic file to base cards on? (Y/N): ")
         options["deck_name"] = input("deck name: ")
@@ -34,13 +34,13 @@ def get_settings(use_inputs: bool, config: dict[str, Any]) -> dict[str, str]:
         )
     else:
         options["topic"] = config["options"]["topic"]
-        options["use_file"] = config["options"]["use_file"]
+        options["use_topic_file"] = config["options"]["use_topic_file"]
         options["deck_name"] = config["options"]["deck_name"]
         options["card_amount"] = config["options"]["card_amount"]
         options["text"] = config["options"]["text"]
 
-    if options["use_file"].lower() in ["yes", "y"]:
-        if use_inputs:
+    if config["options"]["use_topic_file"].lower() in ["yes", "y"]:
+        if config["options"]["use_inputs"]:
             filename_key = input("yaml filename key value: ")
             filepath = config["filepaths"][filename_key]
         else:
@@ -86,7 +86,7 @@ def generate_cards(options: dict[str, str], config: dict[str, Any], prompts: dic
         The function uses exponential retry logic from the `retry` decorator to handle transient failures
         in AI prompt processing or file handling.
     """
-
+    breakpoint()
     filled_prompt = (
         prompts["generate_flashcards"]
         .replace("{{topic}}", options["topic"])
@@ -98,19 +98,11 @@ def generate_cards(options: dict[str, str], config: dict[str, Any], prompts: dic
     cards_to_add_response = ai_handler.prompt_ai(ai_provider, filled_prompt, model=config["model"], system_prompt=prompts["system_prompt"])
     raw_json_str = file_handler.extract_json(
         cards_to_add_response
-    )  # extract the json part of LLM response
+    ) 
     list_of_cards_dicts = file_handler.format_and_split_cards(raw_json_str)
     filename = file_handler.append_to_json_file(
         list_of_cards_dicts, options["topic"], options["deck_name"]
     )
 
-    # if config["simple_reply_format"]: #add enums for different response types?
-    #     cleaned_card_json_str = file_handler.clean_malformed_json(raw_json_str)
-    #     deck_dict = file_handler.text_to_dict(cards_to_add) #extract the json part of LLM response
-    #     if not deck_dict:
-    #         raise Exception
-    #     filename = file_handler.change_to_json_format(cleaned_card_json_str, options["topic"], options["deck_name"])
-    #     if not filename:
-    #         raise Exception
 
     return filename
