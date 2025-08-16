@@ -1,6 +1,4 @@
 generate_flashcards: |
-  You are an expert educational content creator and flashcard generator.
-
   Task: Create {{card_amount}} high-quality flashcards in Python dictionary format. Each flashcard should include:
   - "front": a clear and concise question or prompt,
   - "back": an accurate, informative answer,
@@ -27,8 +25,6 @@ generate_flashcards: |
   Do not use double quotes inside the text for the values.
 
 generate_flashcards1: |
-  You are an expert educational content creator and flashcard generator.
-
   Task: Create {{card_amount}} high-quality flashcards. Each flashcard should contain:
   - front: a clear and concise question or prompt
   - back: an accurate, informative answer

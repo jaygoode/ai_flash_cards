@@ -19,11 +19,6 @@ filepaths:
     decks_path: "./decks/"
     text_file: "./files/JÄÄKÄRIJOUKKUEEN+JA+RYHMÄN+KÄSIK_2018_s106_Ryhmän_ryhmittäminen_puolustukseen.pdf"
 
-model: "deepseek-r1"
-# model: "mistral"
-# model: "poro-34b-chat"
-# model: "akx/viking-7b"
-simple_reply_format: False
 
 options:
   use_readymade_deck: "n"
@@ -34,3 +29,60 @@ options:
   use_inputs: "n"
   card_amount: "5"
   text: "None"
+
+ai_model_settings:
+  temperature: 0.3
+  simple_reply_format: False
+
+providers:
+  openai:
+    default_model: gpt-4-turbo
+    models:
+      - gpt-4
+      - gpt-4-turbo
+      - gpt-3.5-turbo
+      - gpt-3.5-turbo-16k
+      - text-embedding-ada-002   # embeddings
+      - gpt-4o-mini              # smaller/faster new GPT-4
+  anthropic:
+    default_model: claude-3-sonnet
+    models:
+      - claude-3-opus
+      - claude-3-sonnet
+      - claude-3-haiku
+  google:
+    default_model: gemini-1.5-pro
+    models:
+      - gemini-1.5-pro
+      - gemini-1.5-flash
+      - gemini-pro               # legacy
+  mistral:
+    default_model: mistral-large
+    models:
+      - mistral-large
+      - mistral-medium
+      - mixtral-8x7b
+      - mistral-7b-instruct
+  ollama:
+    default_model: llama2
+    models:
+      - llama2
+      - mistral
+      - gemma
+      - codellama
+      - phi
+  huggingface:
+    default_model: bigscience/bloom
+    models:
+      - bigscience/bloom
+      - facebook/opt-6.7b
+      - tiiuae/falcon-7b-instruct
+      - mistralai/Mixtral-8x7B-Instruct-v0.1
+  openrouter:
+    default_model: openai/gpt-4o-mini
+    models:
+      - openai/gpt-4
+      - openai/gpt-4o-mini
+      - anthropic/claude-3-opus
+      - mistralai/mistral-large
+      - meta-llama/llama-2-70b-chat

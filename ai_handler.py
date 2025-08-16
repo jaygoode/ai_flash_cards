@@ -28,56 +28,63 @@ def call_ai(
     ai_provider: AIProvider,
     model: str = "llama2",
     system_prompt: str = "You are a senior-level professional related to the question.",
+    temperature: float = 0.3
 ) -> Card:
-    
-    ai_providers = {
-        AIProvider.OPENAI: ChatOpenAI,                           # GPT-4, GPT-3.5
-        AIProvider.OLLAMA: ChatOllama,                           # Local LLaMA, Mistral, Gemma, etc.
-        AIProvider.ANTHROPIC: ChatAnthropic,                     # Claude 3 series
-        AIProvider.GOOGLE: ChatGoogleGenerativeAI,               # Gemini Pro
-        AIProvider.MISTRAL: ChatMistralAI,                        # Mixtral, Mistral Instruct
-        AIProvider.HUGGINGFACE: HuggingFaceEndpoint,             # HF models
-        # AIProvider.OPENROUTER: Custom integration via OpenAI-compatible endpoint
-}
+    """Calls the selected AI provider and returns a parsed Card object."""
 
-    llm_class = ai_providers.get(ai_provider)
-    if not llm:
-        raise ValueError(f"Unknown AI provider: {ai_provider}")
-
-    # Call function with correct arguments
-    if ai_provider == AIProvider.OPENAI:
-        llm = llm_class(model_name=model, openai_api_key=api_key, temperature=0)
-    elif ai_provider == AIProvider.OLLAMA:
-        llm = llm_class(model=model)
-    else:
-        raise ValueError(f"Unknown AI provider: {ai_provider}")
-
-    parser = PydanticOutputParser(pydantic_object=Card)
-
-    # System message for behavior/context
-    system_msg = SystemMessagePromptTemplate.from_template(system_prompt)
-
-    # User (human) message
+    # ---- prompt setup ----
+    system_msg = SystemMessagePromptTemplate.from_template(template=system_prompt)
     human_msg = HumanMessagePromptTemplate.from_template(template=prompt)
-
-    # Combine system + human messages
     chat_prompt = ChatPromptTemplate.from_messages([system_msg, human_msg])
 
+    parser = PydanticOutputParser(pydantic_object=Card)
     formatted_prompt = chat_prompt.format_prompt(
         topic=prompt,
-        format_instructions=parser.get_format_instructions()
+        format_instructions=parser.get_format_instructions(),
     )
 
-    # Provider selection
-    if ai_provider == AIProvider.OPENAI:
-        api_key = os.getenv("OPENAI_API_KEY")
-        llm = ChatOpenAI(model_name=model, openai_api_key=api_key, temperature=0)
-    elif ai_provider == AIProvider.OLLAMA:
-        llm = ChatOllama(model=model)
-    else:
+    # ---- provider registry ----
+    provider_factories = {
+        AIProvider.OPENAI: lambda: ChatOpenAI(
+            model_name=model,
+            openai_api_key=os.getenv("OPENAI_API_KEY"),
+            temperature=temperature,
+        ),
+        AIProvider.OLLAMA: lambda: ChatOllama(model=model),
+        AIProvider.ANTHROPIC: lambda: ChatAnthropic(
+            model=model,
+            anthropic_api_key=os.getenv("ANTHROPIC_API_KEY"),
+            temperature=temperature,
+        ),
+        AIProvider.GOOGLE: lambda: ChatGoogleGenerativeAI(
+            model=model,
+            google_api_key=os.getenv("GOOGLE_API_KEY"),
+            temperature=temperature,
+        ),
+        AIProvider.MISTRAL: lambda: ChatMistralAI(
+            model=model,
+            mistral_api_key=os.getenv("MISTRAL_API_KEY"),
+            temperature=temperature,
+        ),
+        AIProvider.HUGGINGFACE: lambda: HuggingFaceEndpoint(
+            repo_id=model,
+            huggingfacehub_api_token=os.getenv("HUGGINGFACE_API_KEY"),
+        ),
+        AIProvider.OPENROUTER: lambda: ChatOpenAI(
+            model_name=model,
+            openai_api_key=os.getenv("OPENROUTER_API_KEY"),
+            base_url="https://openrouter.ai/api/v1",
+            temperature=temperature,
+        ),
+    }
+
+    # ---- LLM instantiation ----
+    if ai_provider not in provider_factories:
         raise ValueError(f"Unknown AI provider: {ai_provider}")
 
-    # AI call + parsing
+    llm = provider_factories[ai_provider]()
+
+    # ---- AI call + parsing ----
     response = llm(formatted_prompt.to_messages())
     card = parser.parse(response.content)
     return card

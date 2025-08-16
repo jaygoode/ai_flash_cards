@@ -94,8 +94,15 @@ def generate_cards(options: dict[str, str], config: dict[str, Any], prompts: dic
         .replace("{{card_amount}}", options["card_amount"])
     )
     print(f'''topic:{options["topic"]}, card amount: {options["card_amount"]}''')
-    ai_provider = AIProvider.OPENAI
-    cards_to_add_response = ai_handler.prompt_ai(ai_provider, filled_prompt, model=config["model"], system_prompt=prompts["system_prompt"])
+    ai_provider = AIProvider.OLLAMA #TODO ui input
+    model = "mistral" #TODO ui input dropdown, or type it yourself
+    #TODO this logic is a bit strange if using dropdowns, maybe a if else check for typing yourself or using specific model from list
+    available_models  = config["providers"].get(ai_provider.value, {}).get("models", [])
+    if model not in available_models:
+        model = config["providers"].get(ai_provider.value, {}).get("default_model")
+        print(f"Selected model not listed, defaulting to {model}...")
+
+    cards_to_add_response = ai_handler.call_ai(filled_prompt, ai_provider, model=model, system_prompt=prompts["system_prompt"], temperature=config["ai_model_settings"]["temperature"])
     raw_json_str = file_handler.extract_json(
         cards_to_add_response
     ) 
@@ -103,6 +110,5 @@ def generate_cards(options: dict[str, str], config: dict[str, Any], prompts: dic
     filename = file_handler.append_to_json_file(
         list_of_cards_dicts, options["topic"], options["deck_name"]
     )
-
 
     return filename
