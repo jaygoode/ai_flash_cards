@@ -14,6 +14,9 @@ from langchain_anthropic import ChatAnthropic
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_mistralai import ChatMistralAI
 from langchain_huggingface import HuggingFaceEndpoint
+from typing import Optional
+
+from langchain_community.vectorstores import Chroma, FAISS
 
 class Card(BaseModel):
     question: str = Field(..., description="The question to be asked on the flashcard.")
@@ -22,13 +25,18 @@ class Card(BaseModel):
     deck_name: str = Field(..., description="The name of the Anki deck to which this card belongs.")
     model: str = Field(default="llama2", description="The AI model used to generate the card content.")
 
+def vector_store_init():
+    EMBEDDING_MODEL = "BAAI/bge-large-en"
+    embeddings = 123
     
 def call_ai(
     prompt: str,
     ai_provider: AIProvider,
     model: str = "llama2",
     system_prompt: str = "You are a senior-level professional related to the question.",
-    temperature: float = 0.3
+    temperature: float = 0.3,
+    vectore_store: Optional[Chroma] = None,
+    k: int = 3
 ) -> Card:
     """Calls the selected AI provider and returns a parsed Card object."""
 
