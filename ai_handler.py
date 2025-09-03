@@ -1,7 +1,5 @@
-import requests
 import os
-import ollama
-from ollama import ChatResponse 
+import ast
 from pydantic import BaseModel, Field
 from langchain_community.chat_models import ChatOllama
 from langchain_openai import ChatOpenAI
@@ -16,7 +14,7 @@ from langchain_mistralai import ChatMistralAI
 from langchain_huggingface import HuggingFaceEndpoint
 from typing import Optional
 
-from langchain_community.vectorstores import Chroma, FAISS
+from langchain_community.vectorstores import Chroma
 
 class Card(BaseModel):
     question: str = Field(..., description="The question to be asked on the flashcard.")
@@ -38,19 +36,11 @@ def call_ai(
     vectore_store: Optional[Chroma] = None,
     k: int = 3
 ) -> Card:
-    """Calls the selected AI provider and returns a parsed Card object."""
-
-    # ---- prompt setup ----
-    system_msg = SystemMessagePromptTemplate.from_template(template=system_prompt)
-    human_msg = HumanMessagePromptTemplate.from_template(template=prompt)
-    chat_prompt = ChatPromptTemplate.from_messages([system_msg, human_msg])
-
-    parser = PydanticOutputParser(pydantic_object=Card)
-    formatted_prompt = chat_prompt.format_prompt(
-        topic=prompt,
-        format_instructions=parser.get_format_instructions(),
-    )
-
+    """
+    Calls the selected AI provider and returns a list of flashcards.
+    Each flashcard is a dict: {"front": ..., "back": ..., "tags": ...}
+    """
+        
     # ---- provider registry ----
     provider_factories = {
         AIProvider.OPENAI: lambda: ChatOpenAI(
@@ -85,14 +75,38 @@ def call_ai(
             temperature=temperature,
         ),
     }
-
+    
     # ---- LLM instantiation ----
     if ai_provider not in provider_factories:
         raise ValueError(f"Unknown AI provider: {ai_provider}")
 
     llm = provider_factories[ai_provider]()
 
-    # ---- AI call + parsing ----
+    if vectore_store:
+        retriever = vectore_store.as_retriever(search_kwargs={"k": k})
+        context_docs = retriever.get_relevant_documents(prompt)
+        context_text = "\n\n".join([doc.page_content for doc in context_docs])
+        prompt = f"Context:\n{context_text}\n\nQuestion:\n{prompt}"
+
+    # ---- prompt setup ----
+    system_msg = SystemMessagePromptTemplate.from_template(template=system_prompt)
+    human_msg = HumanMessagePromptTemplate.from_template(template=prompt)
+    chat_prompt = ChatPromptTemplate.from_messages([system_msg, human_msg])
+
+    parser = PydanticOutputParser(pydantic_object=Card)
+    formatted_prompt = chat_prompt.format_prompt(
+        topic=prompt,
+        format_instructions=parser.get_format_instructions(),
+    )
+
+    # ---- AI call ----
     response = llm(formatted_prompt.to_messages())
-    card = parser.parse(response.content)
-    return card
+    raw_output = response.content.strip()
+
+    # ---- Parse safely into Python list ----
+    try:
+        flashcards = ast.literal_eval(raw_output)
+    except Exception:
+        raise ValueError(f"Model returned invalid flashcard list:\n{raw_output}")
+
+    return flashcards
