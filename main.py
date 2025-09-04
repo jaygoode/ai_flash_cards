@@ -21,12 +21,18 @@ def create_from_deck_json(config, os_name):
     print(f"Adding cards to deck: {config['options']['readymade_deck_name']}")
     anki_handler.add_cards(config['options']["readymade_deck_name"], cards)
 
-def create_deck_with_ai(config):
+def create_deck_with_ai(config:dict):
     options: Dict[str, str] = helpers.get_settings(config)
     filename:str = ""
     breakpoint()
-    for chunk in file_handler.chunk_text(options["topic"]):
-        filename = helpers.generate_cards(options, config, prompts, chunk)
+    # if options["small_text_file"]:
+    #     for chunk in file_handler.chunk_text(options["topic"]):
+    #         filename = helpers.generate_cards(options, config, prompts, chunk)
+    # else:
+    #     filename = helpers.generate_cards(options, config, prompts, chunk)
+    chunk = ""
+    filename = helpers.generate_cards(options, config, prompts, chunk)
+
     cards = file_handler.read_json_file(filename)
     anki_handler.add_cards(options["deck_name"], cards)
 
