@@ -1,11 +1,8 @@
 from tenacity import retry, stop_after_attempt, wait_fixed
-
 import ai_handler
 import file_handler
 from typing import Dict, Any
 from enums import AIProvider
-from pathlib import Path
-import os
 
 def get_options(config: dict[str, Any]) -> dict[str, str]:
     """
@@ -42,13 +39,7 @@ def get_options(config: dict[str, Any]) -> dict[str, str]:
 
     if config["options"]["use_topic_file"].lower() in ["yes", "y"]:
         
-        filepath = file_handler.get_topic_file(config)
-        options["text"] = "create cards based on this text: \n"
-        text = file_handler.read_file(filepath)
-        if text is None:
-            options["text"] += "No text found."
-        else:
-            options["text"] += text
+        options["topic_filepath"]  = file_handler.get_topic_file(config)
 
     return options
 
@@ -83,7 +74,6 @@ def generate_cards(options: dict[str, str], config: dict[str, Any], prompts: dic
         The function uses exponential retry logic from the `retry` decorator to handle transient failures
         in AI prompt processing or file handling.
     """
-
     print(f'''topic:{options["topic"]}, card amount: {options["card_amount"]}''')
     ai_provider = AIProvider.OLLAMA #TODO ui input
     model = "mistral" #TODO ui input dropdown, or type it yourself

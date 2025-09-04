@@ -122,7 +122,8 @@ def init_vector_store(config:dict):
     docs = load_documents(config["filepaths"][os_name]["files_path"])
 
     splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
-    chunks = splitter.create_documents(docs)
+    breakpoint()
+    chunks = splitter.split_documents(docs)
     embeddings = OllamaEmbeddings(model="nomic-embed-text") #TODO needs dynamic embedding choices for all models
     return Chroma.from_documents(chunks, embeddings)
 

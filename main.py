@@ -21,14 +21,11 @@ def create_from_deck_json(config, os_name):
 
 def create_deck_with_ai(config:dict):
     options: Dict[str, str] = helpers.get_options(config)
-    filename:str = ""
+    filename = helpers.generate_cards(options, config, prompts)
     breakpoint()
 
-
-    filename = helpers.generate_cards(options, config, prompts)
-
     cards = file_handler.read_json_file(filename)
-    anki_handler.add_cards(options["deck_name"], cards)
+    anki_handler.add_cards(options["deck_na me"], cards)
 
     print(
         f'''card creation done! deck name: {options["deck_name"]}, topic: {options["topic"]}, cards created: {len(cards)}'''

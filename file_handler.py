@@ -1,3 +1,4 @@
+import platform
 import csv
 import json
 import os
@@ -5,7 +6,6 @@ import re
 from pathlib import Path
 import docx
 import pdfplumber
-from psutil import process_iter, NoSuchProcess, AccessDenied, Process
 import tiktoken
 import yaml
 from typing import List, Dict, Any, cast, Generator, Iterator
@@ -403,8 +403,10 @@ def get_topic_file(config:dict):
     - Deletes the rest
     - Sets `filepath` to the path of the latest file
     """
+    system = platform.system().lower()
+
     if config["options"]["use_topic_file"].lower() in ["yes", "y"]:
-        folder = Path(config["filepaths"]["files_path"])
+        folder = Path(config["filepaths"][system]["files_path"])
         files = list(folder.glob("*"))
 
         if files:

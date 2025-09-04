@@ -8,13 +8,11 @@ import glob
 import subprocess
 import file_handler
 import glob
-from pathlib import Path
 ANKI_CONNECT_URL = "http://localhost:8765"
 
 def start_anki(os_name, config):
     installation_folder = config["filepaths"][os_name]["anki_path"]
     installation_file = glob.glob(os.path.join(installation_folder, config["filepaths"][os_name]["installer_name"]))[0]
-    breakpoint()
     if not os.path.exists(config["filepaths"][os_name]["anki_exe_path"]):
         download_anki_installation_file(dest_folder=config["filepaths"][os_name]["anki_path"])
 
