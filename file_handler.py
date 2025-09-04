@@ -2,7 +2,7 @@ import csv
 import json
 import os
 import re
-
+from pathlib import Path
 import docx
 import pdfplumber
 from psutil import process_iter, NoSuchProcess, AccessDenied, Process
@@ -390,3 +390,29 @@ def chunk_text(text:str, max_tokens:int=3000)-> Generator[Any, Any, Any]:
 
     if current_chunk:
         yield " ".join(current_chunk)
+
+
+
+def get_topic_file(config:dict):
+    """
+    Select the latest file from the configured folder and delete all others.
+
+    - Looks inside `config["filepaths"]["files_path"]`
+    - Finds all files in that folder
+    - Keeps only the most recently modified file
+    - Deletes the rest
+    - Sets `filepath` to the path of the latest file
+    """
+    if config["options"]["use_topic_file"].lower() in ["yes", "y"]:
+        folder = Path(config["filepaths"]["files_path"])
+        files = list(folder.glob("*"))
+
+        if files:
+            latest_file = max(files, key=lambda f: f.stat().st_mtime)
+            for f in files:
+                if f != latest_file and f.is_file():
+                    os.remove(f)
+            return str(latest_file)
+        else:
+            raise FileNotFoundError(f"No files found in {folder}")
+        

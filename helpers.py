@@ -4,7 +4,8 @@ import ai_handler
 import file_handler
 from typing import Dict, Any
 from enums import AIProvider
-
+from pathlib import Path
+import os
 
 def get_options(config: dict[str, Any]) -> dict[str, str]:
     """
@@ -40,12 +41,8 @@ def get_options(config: dict[str, Any]) -> dict[str, str]:
         options["text"] = config["options"]["text"]
 
     if config["options"]["use_topic_file"].lower() in ["yes", "y"]:
-        if config["options"]["use_inputs"]:
-            filename_key = input("yaml filename key value: ")
-            filepath = config["filepaths"][filename_key]
-        else:
-            filepath = config["filepaths"]["text_file"]
-
+        
+        filepath = file_handler.get_topic_file(config)
         options["text"] = "create cards based on this text: \n"
         text = file_handler.read_file(filepath)
         if text is None:
@@ -98,7 +95,7 @@ def generate_cards(options: dict[str, str], config: dict[str, Any], prompts: dic
 
     vector_store = None
     if options["use_topic_file"]:
-        vector_store = ""
+        vector_store = ai_handler.init_vector_store(config)
     cards_to_add_response = ai_handler.call_ai(prompts["generate_flashcards"], ai_provider, model=model, system_prompt=prompts["system_prompt"], temperature=config["ai_model_settings"]["temperature"], vector_store=vector_store)
     raw_json_str = file_handler.extract_json(
         cards_to_add_response

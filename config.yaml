@@ -17,15 +17,15 @@ filepaths:
     # anki_exe_path: "./anki/anki-launcher-25.07.5-linux/anki"
     files_path: "./files"
     decks_path: "./decks/"
-    text_file: "./files/JÄÄKÄRIJOUKKUEEN+JA+RYHMÄN+KÄSIK_2018_s106_Ryhmän_ryhmittäminen_puolustukseen.pdf"
+    text_file: "./files/2016_liite_fyysiset testit (1).pdf"
 
 
 options:
   use_readymade_deck: "n"
   readymade_deck_name: "deck for learning finnish grammar_finnish"
-  deck_name: "deck for learning finnish grammar_finnish"
-  topic: "deck for learning finnish words, from english to finnish"
-  use_topic_file: "n"
+  deck_name: "a deck for learning finnish words and how to use them in sentences"
+  topic: "deck for learning finnish words and how to use them in sentences, from english to finnish"
+  use_topic_file: "y"
   use_inputs: "n"
   card_amount: "5"
   text: "None"
