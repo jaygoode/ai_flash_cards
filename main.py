@@ -1,11 +1,12 @@
-import os
-import subprocess
 import anki_handler
 import file_handler
 import helpers
 from typing import Dict
 import platform 
-import glob 
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_community.vectorstores import Chroma, FAISS
+from langchain_community.embeddings import OllamaEmbeddings, HuggingFaceEmbeddings
+
 
 def create_from_deck_json(config, os_name):
     print(
@@ -25,13 +26,17 @@ def create_deck_with_ai(config:dict):
     options: Dict[str, str] = helpers.get_options(config)
     filename:str = ""
     breakpoint()
-    # if options["small_text_file"]:
-    #     for chunk in file_handler.chunk_text(options["topic"]):
-    #         filename = helpers.generate_cards(options, config, prompts, chunk)
-    # else:
-    #     filename = helpers.generate_cards(options, config, prompts, chunk)
-    chunk = ""
-    filename = helpers.generate_cards(options, config, prompts, chunk)
+    docs = ["Your textbook text here..."]
+
+    # 2. Split into chunks
+    splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+    chunks = splitter.create_documents(docs)
+
+    # 3. Embed + store
+    embeddings = OllamaEmbeddings(model="nomic-embed-text")
+    vector_store = Chroma.from_documents(chunks, embeddings)
+
+    filename = helpers.generate_cards(options, config, prompts)
 
     cards = file_handler.read_json_file(filename)
     anki_handler.add_cards(options["deck_name"], cards)

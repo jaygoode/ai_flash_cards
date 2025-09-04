@@ -13,6 +13,9 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_mistralai import ChatMistralAI
 from langchain_huggingface import HuggingFaceEndpoint
 from typing import Optional
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_community.vectorstores import Chroma
+from langchain_community.embeddings import OllamaEmbeddings
 
 from langchain_community.vectorstores import Chroma
 
@@ -110,3 +113,10 @@ def call_ai(
         raise ValueError(f"Model returned invalid flashcard list:\n{raw_output}")
 
     return flashcards
+
+def init_vector_store():
+    docs = ["Your textbook text here..."]
+    splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+    chunks = splitter.create_documents(docs)
+    embeddings = OllamaEmbeddings(model="nomic-embed-text") #TODO needs dynamic embedding choices for all models
+    return Chroma.from_documents(chunks, embeddings)
