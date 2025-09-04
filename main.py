@@ -22,7 +22,7 @@ def create_from_deck_json(config, os_name):
     anki_handler.add_cards(config['options']["readymade_deck_name"], cards)
 
 def create_deck_with_ai(config:dict):
-    options: Dict[str, str] = helpers.get_settings(config)
+    options: Dict[str, str] = helpers.get_options(config)
     filename:str = ""
     breakpoint()
     # if options["small_text_file"]:

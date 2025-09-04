@@ -6,7 +6,7 @@ from typing import Dict, Any
 from enums import AIProvider
 
 
-def get_settings(config: dict[str, Any]) -> dict[str, str]:
+def get_options(config: dict[str, Any]) -> dict[str, str]:
     """
     Gather configuration options either from user input or a provided config file.
 
@@ -57,7 +57,7 @@ def get_settings(config: dict[str, Any]) -> dict[str, str]:
 
 
 @retry(stop=stop_after_attempt(5), wait=wait_fixed(2))
-def generate_cards(options: dict[str, str], config: dict[str, Any], prompts: dict[str, str], chunk: str) -> str:
+def generate_cards(options: dict[str, str], config: dict[str, Any], prompts: dict[str, str]) -> str:
     """
     Generate flashcards based on a given topic and text chunk using AI prompts.
 
@@ -86,13 +86,7 @@ def generate_cards(options: dict[str, str], config: dict[str, Any], prompts: dic
         The function uses exponential retry logic from the `retry` decorator to handle transient failures
         in AI prompt processing or file handling.
     """
-    breakpoint()
-    filled_prompt = (
-        prompts["generate_flashcards"]
-        .replace("{{topic}}", options["topic"])
-        .replace("{{text}}", chunk)
-        .replace("{{card_amount}}", options["card_amount"])
-    )
+
     print(f'''topic:{options["topic"]}, card amount: {options["card_amount"]}''')
     ai_provider = AIProvider.OLLAMA #TODO ui input
     model = "mistral" #TODO ui input dropdown, or type it yourself
@@ -102,7 +96,10 @@ def generate_cards(options: dict[str, str], config: dict[str, Any], prompts: dic
         model = config["providers"].get(ai_provider.value, {}).get("default_model")
         print(f"Selected model not listed, defaulting to {model}...")
 
-    cards_to_add_response = ai_handler.call_ai(filled_prompt, ai_provider, model=model, system_prompt=prompts["system_prompt"], temperature=config["ai_model_settings"]["temperature"])
+    vector_store = None
+    if options["use_topic_file"]:
+        vector_store = ""
+    cards_to_add_response = ai_handler.call_ai(prompts["generate_flashcards"], ai_provider, model=model, system_prompt=prompts["system_prompt"], temperature=config["ai_model_settings"]["temperature"], vector_store=vector_store)
     raw_json_str = file_handler.extract_json(
         cards_to_add_response
     ) 

@@ -33,7 +33,7 @@ def call_ai(
     model: str = "llama2",
     system_prompt: str = "You are a senior-level professional related to the question.",
     temperature: float = 0.3,
-    vectore_store: Optional[Chroma] = None,
+    vector_store: Optional[Chroma] = None,
     k: int = 3
 ) -> Card:
     """
@@ -82,8 +82,8 @@ def call_ai(
 
     llm = provider_factories[ai_provider]()
 
-    if vectore_store:
-        retriever = vectore_store.as_retriever(search_kwargs={"k": k})
+    if vector_store:
+        retriever = vector_store.as_retriever(search_kwargs={"k": k})
         context_docs = retriever.get_relevant_documents(prompt)
         context_text = "\n\n".join([doc.page_content for doc in context_docs])
         prompt = f"Context:\n{context_text}\n\nQuestion:\n{prompt}"
