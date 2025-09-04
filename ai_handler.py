@@ -16,8 +16,11 @@ from typing import Optional
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
 from langchain_community.embeddings import OllamaEmbeddings
-
+from pathlib import Path
+from langchain.schema import Document
 from langchain_community.vectorstores import Chroma
+import platform 
+from langchain_community.document_loaders import PyPDFLoader
 
 class Card(BaseModel):
     question: str = Field(..., description="The question to be asked on the flashcard.")
@@ -114,9 +117,31 @@ def call_ai(
 
     return flashcards
 
-def init_vector_store():
-    docs = ["Your textbook text here..."]
+def init_vector_store(config:dict):
+    os_name = platform.system().lower()
+    docs = load_documents(config["filepaths"][os_name]["files_path"])
+
     splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
     chunks = splitter.create_documents(docs)
     embeddings = OllamaEmbeddings(model="nomic-embed-text") #TODO needs dynamic embedding choices for all models
     return Chroma.from_documents(chunks, embeddings)
+
+def load_documents(folder_path: str):
+    folder = Path(folder_path)
+    docs = []
+
+    # ---- Load TXT files ----
+    for file_path in folder.glob("*.txt"):
+        with open(file_path, "r", encoding="utf-8") as f:
+            text = f.read()
+        docs.append(Document(page_content=text, metadata={"source": str(file_path)}))
+
+    # ---- Load PDF files ----
+    for file_path in folder.glob("*.pdf"):
+        loader = PyPDFLoader(str(file_path))
+        pdf_docs = loader.load()  # returns a list of Documents (1 per page)
+        for d in pdf_docs:
+            d.metadata["source"] = str(file_path)
+        docs.extend(pdf_docs)
+
+    return docs

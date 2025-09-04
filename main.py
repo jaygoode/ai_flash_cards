@@ -3,9 +3,6 @@ import file_handler
 import helpers
 from typing import Dict
 import platform 
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.vectorstores import Chroma, FAISS
-from langchain_community.embeddings import OllamaEmbeddings, HuggingFaceEmbeddings
 
 
 def create_from_deck_json(config, os_name):
@@ -26,15 +23,7 @@ def create_deck_with_ai(config:dict):
     options: Dict[str, str] = helpers.get_options(config)
     filename:str = ""
     breakpoint()
-    docs = ["Your textbook text here..."]
 
-    # 2. Split into chunks
-    splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
-    chunks = splitter.create_documents(docs)
-
-    # 3. Embed + store
-    embeddings = OllamaEmbeddings(model="nomic-embed-text")
-    vector_store = Chroma.from_documents(chunks, embeddings)
 
     filename = helpers.generate_cards(options, config, prompts)
 
